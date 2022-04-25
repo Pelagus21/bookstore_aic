@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #17a2b8;">
+<div style="margin-top: 120px; max-width: 600px;  height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;" class = "container">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-11">
+            <form class="form" action="/login" autocomplete="off" method="post" onsubmit="f_submit(event, this);">
+
+                <h3 style="margin-top: 20px;" class="text-center text-info">Login</h3>
+
+                <div class="form-group">
+                    <label for="username" class="text-info">Login:</label>
+                    <br>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter your login">
+                    <br>
+                    <p id="usernameBlankErr" style="display: none; color: orangered; margin-top: 10px">Fill the field</p>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="text-info">Password:</label>
+                    <br>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password">
+                    <br>
+                    <p id="passwordBlankErr" style="display: none; color: orangered; margin-top: 10px">Fill the field</p>
+                </div>
+                <div class="form-group" style="width:100%">
+                    <button type="submit" class="btn btn-info btn-md" style="margin-top: 10px;">Log In</button>
+                    <a href="/registration" style="margin-top: 10px; float: right;">Sign Up</a>
+                </div>
+
+                {% if failed %}
+                <div class="form-group">
+                    <p style="color: orangered; margin-top: 20px;">Wrong Login or Password</p>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function f_submit(event, form){
+        let username = form.username.value;
+        let password = form.password.value;
+        if(username == '')
+            document.getElementById("usernameBlankErr").style.display = "initial";
+
+        if(password == '')
+            document.getElementById("passwordBlankErr").style.display = "initial";
+
+        if(username == '' || password == '')
+            return event.preventDefault();
+    }
+</script>
+</body>
+</html>
