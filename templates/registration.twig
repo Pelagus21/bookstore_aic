@@ -48,17 +48,20 @@
                     <div class="form-group">
                         <label for="first_name" class="text-info">First name</label>
                         <br>
-                        <input type="text" name="first_name" class="form-control" placeholder="Enter your name (optional)"/>
+                        <input type="text" id="first_name_field" name="first_name" class="form-control" placeholder="Enter your name (optional)"
+                                {% if userExists %} value="{{ userDTO.first_name }}" {% endif %}/>
                     </div>
                     <div class="form-group">
                         <label for="surname" class="text-info">Surname</label>
                         <br>
-                        <input type="text" name="surname" class="form-control" placeholder="Enter your surname (optional)"/>
+                        <input type="text" id="surname_field" name="surname" class="form-control" placeholder="Enter your surname (optional)"
+                                {% if userExists %} value="{{ userDTO.surname }}" {% endif %}/>
                     </div>
                     <div class="form-group">
                         <label for="last_name" class="text-info">Last name</label>
                         <br>
-                        <input type="text" name="last_name" class="form-control" placeholder="Enter your last name (optional)"/>
+                        <input type="text" id="last_name_field" name="last_name" class="form-control" placeholder="Enter your last name (optional)"
+                                {% if userExists %} value="{{ userDTO.last_name }}" {% endif %}/>
                     </div>
                 </div>
 
@@ -66,7 +69,8 @@
                     <div class="form-group">
                         <label for="email" class="text-info">Email *</label>
                         <br>
-                        <input type="text" name="email" class="form-control" placeholder="Enter your Email"/>
+                        <input type="text" id="email_field" name="email" class="form-control" placeholder="Enter your Email"
+                                {% if userExists %} value="{{ userDTO.email }}" {% endif %}/>
                         <br>
                         <p id="emailErr" class="errLabel">Wrong Email format</p>
                     </div>
@@ -74,7 +78,8 @@
                     <div class="form-group">
                         <label for="birth_date" class="text-info">Birth date *</label>
                         <br>
-                        <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01" value="1999-01-01"/>
+                        <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01" value="1999-01-01"
+                                {% if userExists %} value="{{ userDTO.birth_date }}" {% endif %}/>
                     </div>
                 </div>
 
@@ -89,14 +94,16 @@
                     <div class="form-group">
                        <label for="password" class="text-info">Password *</label>
                         <br>
-                        <input type="password" name="password" class="form-control" placeholder="Enter your password"/>
+                        <input type="password" id="password_field" name="password" class="form-control" placeholder="Enter your password"
+                                {% if userExists %} value="{{ userDTO.password }}" {% endif %}/>
                         <br>
                         <p id="passErr" class="errLabel">Fill the field</p>
                     </div>
                     <div class="form-group">
                         <label for="confirm" class="text-info">Confirm password *</label>
                         <br>
-                        <input type="password" name="confirm" class="form-control" placeholder="Confirm your password"/>
+                        <input type="password" id="confirm_field" name="confirm" class="form-control" placeholder="Confirm your password"
+                                {% if userExists %} value="{{ userDTO.password }}" {% endif %}/>
                         <br>
                         <p id="confirmErr" class="errLabel">Password doesn't match</p>
                     </div>
@@ -110,10 +117,9 @@
                 </div>
 
 				<div class="form-group" style="width:100%">
-					<button type="submit" id="backBtn" formaction="/login" formmethod="get" class="btn btn-info btn-md" style="margin-top: 10px;">Back</button>
-                    <button type="submit" id="prevBtn" class="btn btn-info btn-md" style="display: none; margin-top: 10px;" onclick="nextPrev(-1)">Previous</button>
-                    <button type="submit" id="nextBtn" class="btn btn-info btn-md" style="margin-top: 10px; float: right;" onclick="nextPrev(1)">Next</button>
-                    <!--<button type="submit" id="submitBtn" class="btn btn-info btn-md" style="display:none; margin-top: 10px; float: right;">Submit</button>-->
+					<button type="button" id="backBtn" formaction="/login" formmethod="get" class="btn btn-info btn-md" style="margin-top: 10px;">Back</button>
+                    <button type="button" id="prevBtn" class="btn btn-info btn-md" style="display: none; margin-top: 10px;" onclick="nextPrev(-1)">Previous</button>
+                    <button type="button" id="nextBtn" class="btn btn-info btn-md" style="margin-top: 10px; float: right;" onclick="nextPrev(1)">Next</button>
 				</div>
 
                 <div class="form-group" style="text-align:center;margin-top:5px; margin-bottom: 30px">
@@ -129,8 +135,17 @@
 </div>
 <script>
     let currentTab = 0;
+    loginTakenErr();
     showTab(currentTab);
     setMaxDate();
+
+    function loginTakenErr() {
+        if({{ userExists }}) {
+            currentTab = 2;
+            document.getElementsByClassName("step")[0].className += " finish";
+            document.getElementsByClassName("step")[1].className += " finish";
+        }
+    }
 
     function setMaxDate() {
         let today = new Date();
@@ -217,7 +232,7 @@
     }
 
     function validateLogin(login) {
-        return login.length < 50 && /^[1-9a-zA-Z]+$/.test(login);
+        return login.length < 50 && /^[a-zA-Z0-9]+$/.test(login);
     }
 
     function validateEmail (email) {
