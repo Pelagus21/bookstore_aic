@@ -163,3 +163,41 @@ exports.getAuthor = function (req, res) {
         }
     });
 }
+
+exports.getGenre = function (req, res) {
+    let queryStr = 'SELECT * FROM "Genres" WHERE "Id" = ' + req.params.id + ';';
+    client.query(queryStr)
+        .then((res1) => {
+            if(res1.rows.length) {
+                let subqr = 'SELECT "Genre_id"' +
+                    'FROM "Books_Genres"' +
+                    'WHERE "Genre_id" = ' + req.params.id;
+                //find books of concrete genre
+                let qstr2 = 'SELECT "Id", "Book_name"' +
+                    'FROM "Books"' +
+                    'WHERE "Id" IN (' + subqr + ');';
+                client.query(qstr2)
+                    .then((res2) => {
+                        //find genre authors
+                        let qstr3 = 'SELECT "Id", "First_name", "Surname"' +
+                            'FROM "Authors"' +
+                            'WHERE "Id" IN (' +
+                            'SELECT "Author_id"' +
+                            'FROM "Books_Authors"' +
+                            'WHERE "Book_id" IN (' + subqr + '));';
+                        client.query(qstr3)
+                        .then((res3) => {
+                            return res.render(path.resolve(__dirname + '/../templates/genrePage.twig'),
+                                {
+                                    genre: res1.rows[0],
+                                    books: res2.rows,
+                                    authors: res3.rows
+                                });
+                        });
+                    });
+            } else {
+                res.statusCode = 404;
+                res.end("Not found");
+            }
+        });
+}

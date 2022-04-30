@@ -18,6 +18,8 @@ router.get('/book/:id', controller.getBook);
 
 router.get('/author/:id', controller.getAuthor);
 
+router.get('/genre/:id', controller.getGenre);
+
 // router.post('/addEmail', controller.addEmail);
 //
 // //used in order to delete item
