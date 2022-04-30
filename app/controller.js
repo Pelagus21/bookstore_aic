@@ -169,7 +169,7 @@ exports.getGenre = function (req, res) {
     client.query(queryStr)
         .then((res1) => {
             if(res1.rows.length) {
-                let subqr = 'SELECT "Genre_id"' +
+                let subqr = 'SELECT "Book_id"' +
                     'FROM "Books_Genres"' +
                     'WHERE "Genre_id" = ' + req.params.id;
                 //find books of concrete genre
