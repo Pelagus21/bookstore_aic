@@ -100,7 +100,7 @@ exports.getBook = function(req, res) {
                 'WHERE "Id" IN (' +
                 'SELECT "Author_id"' +
                 'FROM "Books_Authors"' +
-                'WHERE "Book_id" = \'' + req.params.id + '\');'
+                'WHERE "Book_id" = ' + req.params.id + ');';
             client.query(qstr2)
                 .then((res2) => {
                     let qstr3 = 'SELECT "Id", "Genre_name"' +
@@ -108,7 +108,7 @@ exports.getBook = function(req, res) {
                         'WHERE "Id" IN (' +
                         'SELECT "Genre_id"' +
                         'FROM "Books_Genres"' +
-                        'WHERE "Book_id" = \'' + req.params.id + '\');';
+                        'WHERE "Book_id" = ' + req.params.id + ');';
                     client.query(qstr3)
                         .then((res3) => {
                             return res.render(path.resolve(__dirname + '/../templates/bookPage.twig'),
@@ -119,6 +119,44 @@ exports.getBook = function(req, res) {
                                 });
                         });
                 });
+        } else {
+            res.statusCode = 404;
+            res.end("Not found");
+        }
+    });
+}
+
+exports.getAuthor = function (req, res) {
+    let queryStr = 'SELECT * FROM "Authors" WHERE "Id" = ' + req.params.id + ';';
+    client.query(queryStr)
+    .then((res1) => {
+        if(res1.rows.length) {
+            let subqr = 'SELECT "Book_id"' +
+                'FROM "Books_Authors"' +
+                'WHERE "Author_id" = ' + req.params.id;
+            //find books of concrete author
+            let qstr2 = 'SELECT "Id", "Book_name"' +
+                'FROM "Books"' +
+                'WHERE "Id" IN (' + subqr + ');';
+            client.query(qstr2)
+            .then((res2) => {
+                //find author book genres
+                let qstr3 = 'SELECT "Id", "Genre_name"' +
+                    'FROM "Genres"' +
+                    'WHERE "Id" IN (' +
+                    'SELECT "Genre_id"' +
+                    'FROM "Books_Genres"' +
+                    'WHERE "Book_id" IN (' + subqr + '));';
+                client.query(qstr3)
+                .then((res3) => {
+                    return res.render(path.resolve(__dirname + '/../templates/authorPage.twig'),
+                        {
+                            author: res1.rows[0],
+                            books: res2.rows,
+                            genres: res3.rows
+                        });
+                });
+            });
         } else {
             res.statusCode = 404;
             res.end("Not found");

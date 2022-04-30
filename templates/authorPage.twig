@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .row-item {
+            margin: 15px;
+        }
+        li:last-child {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body style="background-color: #17a2b8;">
+<div style="margin-top: 50px;" class="container">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+            <div class="row" style="margin-top: 10px">
+                <div style="margin-left: 15px; margin-right: 15px" class="col-md-12">
+                    <h2 style="padding-top: 10px">{{ author.First_name }} {{ author.Surname }} {{ author.Last_name }}</h2>
+                </div>
+            </div>
+            {% if author.Pseudonym %}
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Pseudonym:
+                            <h5 style="display: inline"> {{ author.Pseudonym }}</h5>
+                        </h4>
+                        <p></p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <h4 style="display: inline;">Books: </h4>
+                    <ul>
+                        {% for book in books %}
+                            <li class="h6" style="display: inline;">
+                                <a href="/book/{{ book.Id }}">{{ book.Book_name }}</a>
+                            </li>
+                            <li class="h6" style="display: inline;"><a>,</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <h4 style="display: inline;">Genres: </h4>
+                    <ul>
+                        {% for genre in genres %}
+                            <li class="h6" style="display: inline;">
+                                <a href="/genre/{{ genre.Id }}">{{ genre.Genre_name}}</a>
+                            </li>
+                            <li class="h6" style="display: inline;"><a>,</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px; float: right;" formaction="/home">Back</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+</div>
+</body>
+
+</html>
