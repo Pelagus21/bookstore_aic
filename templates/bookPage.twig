@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .row-item {
+            margin: 15px;
+        }
+
+        li:last-child {
+            visibility: hidden;
+        }
+
+    </style>
+</head>
+
+<body style="background-color: #17a2b8;">
+<div style="margin-top: 50px;" class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-12">
+                        <h2 class="text-center text-info" style="padding-top: 10px">{{ book.Book_name }}</h2>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Authors: </h4>
+                        <ul>
+                            {% for author in authors %}
+                                <li class="h6" style="display: inline;">
+                                    <a href="/author/{{ author.Id }}">{{ author.First_name }} {{ author.Surname }}</a>
+                                </li>
+                                <li class="h6" style="display: inline;"><a>,</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Genres: </h4>
+                        <ul>
+                            {% for genre in genres %}
+                                <li class="h6" style="display: inline;">
+                                    <a href="/genre/{{ genre.Id }}">{{ genre.Genre_name}}</a>
+                                </li>
+                                <li class="h6" style="display: inline;"><a>,</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Description: </h4>
+                        <p style="margin-top: 6px">{{ book.Description }}</p>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Price:
+                            <h5 style="display: inline"> {{ book.Price }}</h5>
+                        </h4>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Year of publishing:
+                            <h5 style="display: inline">{{ book.Year_of_publishing }}</h5>
+                        </h4>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <h4 style="display: inline;">Available copies:
+                            <h5 style="display: inline">{{ book.Number_of_copies }}</h5>
+                        </h4>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="row row-item">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px;" formaction="/addToBasket/{{ book.Id }}" formmethod="post">Put in basket</button>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px; float: right;" formaction="/home">Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

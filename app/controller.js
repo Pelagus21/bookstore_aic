@@ -26,7 +26,7 @@ exports.getHomePage = function(req,  res) {
 }
 
 exports.logIn = function (req, res) {
-    let queryStr = 'SELECT * FROM public."Customers" ' +
+    let queryStr = 'SELECT * FROM "Customers" ' +
                     'WHERE "Login" = \'' + req.body.username +
                     '\' AND "Password" = \'' + req.body.password + '\';';
     client.query(queryStr, (err, result) => {
@@ -54,7 +54,7 @@ exports.getRegistrationForm = function(req, res) {
 }
 
 exports.registerUser = function(req, res) {
-    let queryStr = 'INSERT INTO public."Customers" ("Login", "Password", "Birth_date", "Email"';
+    let queryStr = 'INSERT INTO "Customers" ("Login", "Password", "Birth_date", "Email"';
     if(req.body.first_name != "")
         queryStr += ', "First_name"';
     if(req.body.surname != "")
@@ -86,5 +86,42 @@ exports.registerUser = function(req, res) {
         userDTO.password = req.body.password;
         return res.redirect('/registration')
     });
+}
 
+//get book page by id
+
+exports.getBook = function(req, res) {
+    let queryStr = 'SELECT * FROM "Books" WHERE "Id" = ' + req.params.id + ';';
+    client.query(queryStr)
+    .then((res1) => {
+        if(res1.rows.length) {
+            let qstr2 = 'SELECT "Id", "First_name", "Surname"' +
+                'FROM "Authors"' +
+                'WHERE "Id" IN (' +
+                'SELECT "Author_id"' +
+                'FROM "Books_Authors"' +
+                'WHERE "Book_id" = \'' + req.params.id + '\');'
+            client.query(qstr2)
+                .then((res2) => {
+                    let qstr3 = 'SELECT "Id", "Genre_name"' +
+                        'FROM "Genres"' +
+                        'WHERE "Id" IN (' +
+                        'SELECT "Genre_id"' +
+                        'FROM "Books_Genres"' +
+                        'WHERE "Book_id" = \'' + req.params.id + '\');';
+                    client.query(qstr3)
+                        .then((res3) => {
+                            return res.render(path.resolve(__dirname + '/../templates/bookPage.twig'),
+                                {
+                                    book: res1.rows[0],
+                                    authors: res2.rows,
+                                    genres: res3.rows
+                                });
+                        });
+                });
+        } else {
+            res.statusCode = 404;
+            res.end("Not found");
+        }
+    });
 }

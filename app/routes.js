@@ -13,6 +13,9 @@ router.get('/home', controller.getHomePage);
 router.get('/registration', controller.getRegistrationForm);
 
 router.post('/registration', controller.registerUser);
+
+router.get('/book/:id', controller.getBook);
+
 // router.post('/addEmail', controller.addEmail);
 //
 // //used in order to delete item
