@@ -1,0 +1,9 @@
+{
+  "name": "bookstore_aic",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "twig": "^1.15.4"
+  }
+}
