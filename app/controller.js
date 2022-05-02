@@ -1,30 +1,10 @@
-const {Client} = require('pg');
-
 const path = require('path');
-
-const client = new Client({
-    host: "heffalump.db.elephantsql.com",
-    user: "bnjhbbyr",
-    port: 5432,
-    password: "PzYsKZGDwrnZ_6j4buhyh7dpUtuCja3u",
-    database: "bnjhbbyr"
-});
-
-client.connect();
-
-let failed = false;
-let exists = false;
-let userDTO = {};
-
-exports.getLoginForm = function (req, res) {
-    res.render(path.resolve(__dirname + '/../templates/login.twig'), {failed: failed});
-    failed = false;
-};
+const db = require('../app/db_connection');
 
 exports.getHomePage = async function (req, res) {
     let queryStr = 'SELECT "Id", "Genre_name" FROM "Genres"';
 
-    await client.query(queryStr, async (err, result) =>
+    await db.query(queryStr, async (err, result) =>
     {
         if (!err)
         {
@@ -36,7 +16,7 @@ exports.getHomePage = async function (req, res) {
                     let getBooksOfThisGenre = 'SELECT *' +
                         'FROM "Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id"' +
                         'WHERE "Genre_id" = ' + result.rows[i].Id;
-                    genreWithBooks.push(await client.query(getBooksOfThisGenre).then((resInner) =>
+                    genreWithBooks.push(await db.query(getBooksOfThisGenre).then((resInner) =>
                     {
                         return {genre: result.rows[i], books: resInner.rows};
                     }));
@@ -47,74 +27,10 @@ exports.getHomePage = async function (req, res) {
     });
 }
 
-exports.logIn = function (req, res) {
-    let queryStr = 'SELECT * FROM "Customers" ' +
-        'WHERE "Login" = \'' + req.body.username +
-        '\' AND "Password" = \'' + req.body.password + '\';';
-    client.query(queryStr, (err, result) => {
-        if (!err) {
-            if (result.rows.length) {
-                console.log("Authenticated");
-                console.log(result.rows);
-                return res.redirect('/home');
-            } else {
-                console.log("Authentication failed!");
-                failed = true;
-                return res.redirect('/login');
-            }
-        }
-        console.log(err);
-        res.statusCode = 500;
-        res.end("Unknown Error");
-    });
-}
-
-exports.getRegistrationForm = function (req, res) {
-    res.render(path.resolve(__dirname + '/../templates/registration.twig'), {userExists: exists, userDTO: userDTO});
-    exists = false;
-    userDTO = {};
-}
-
-exports.registerUser = function (req, res) {
-    let queryStr = 'INSERT INTO "Customers" ("Login", "Password", "Birth_date", "Email"';
-    if (req.body.first_name != "")
-        queryStr += ', "First_name"';
-    if (req.body.surname != "")
-        queryStr += ', "Surname"';
-    if (req.body.last_name != "")
-        queryStr += ', "Last_name"';
-    queryStr += ') values(\'' + req.body.username + '\', \'' + req.body.password + '\', \'' +
-        req.body.birth_date + '\', \'' + req.body.email + '\'';
-    if (req.body.first_name != "")
-        queryStr += ', \'' + req.body.first_name + '\'';
-    if (req.body.surname != "")
-        queryStr += ', \'' + req.body.surname + '\'';
-    if (req.body.last_name != "")
-        queryStr += ', \'' + req.body.last_name + '\'';
-    queryStr += ');';
-    console.log(queryStr);
-    client.query(queryStr, (err, result) => {
-        if (!err) {
-            console.log("User registered!");
-            return res.redirect('/home');
-        }
-        console.log(err);
-        exists = true;
-        userDTO.first_name = req.body.first_name;
-        userDTO.surname = req.body.surname;
-        userDTO.last_name = req.body.last_name;
-        userDTO.email = req.body.email;
-        userDTO.birth_date = req.body.birth_date;
-        userDTO.password = req.body.password;
-        return res.redirect('/registration')
-    });
-}
-
 //get book page by id
-
 exports.getBook = function (req, res) {
     let queryStr = 'SELECT * FROM "Books" WHERE "Id" = ' + req.params.id + ';';
-    client.query(queryStr)
+    db.query(queryStr)
         .then((res1) => {
             if (res1.rows.length) {
                 let qstr2 = 'SELECT "Id", "First_name", "Surname"' +
@@ -123,7 +39,7 @@ exports.getBook = function (req, res) {
                     'SELECT "Author_id"' +
                     'FROM "Books_Authors"' +
                     'WHERE "Book_id" = ' + req.params.id + ');';
-                client.query(qstr2)
+                db.query(qstr2)
                     .then((res2) => {
                         let qstr3 = 'SELECT "Id", "Genre_name"' +
                             'FROM "Genres"' +
@@ -131,7 +47,7 @@ exports.getBook = function (req, res) {
                             'SELECT "Genre_id"' +
                             'FROM "Books_Genres"' +
                             'WHERE "Book_id" = ' + req.params.id + ');';
-                        client.query(qstr3)
+                        db.query(qstr3)
                             .then((res3) => {
                                 return res.render(path.resolve(__dirname + '/../templates/bookPage.twig'),
                                     {
@@ -150,7 +66,7 @@ exports.getBook = function (req, res) {
 
 exports.getAuthor = function (req, res) {
     let queryStr = 'SELECT * FROM "Authors" WHERE "Id" = ' + req.params.id + ';';
-    client.query(queryStr)
+    db.query(queryStr)
         .then((res1) => {
             if (res1.rows.length) {
                 let subqr = 'SELECT "Book_id"' +
@@ -160,7 +76,7 @@ exports.getAuthor = function (req, res) {
                 let qstr2 = 'SELECT "Id", "Book_name"' +
                     'FROM "Books"' +
                     'WHERE "Id" IN (' + subqr + ');';
-                client.query(qstr2)
+                db.query(qstr2)
                     .then((res2) => {
                         //find author book genres
                         let qstr3 = 'SELECT "Id", "Genre_name"' +
@@ -169,7 +85,7 @@ exports.getAuthor = function (req, res) {
                             'SELECT "Genre_id"' +
                             'FROM "Books_Genres"' +
                             'WHERE "Book_id" IN (' + subqr + '));';
-                        client.query(qstr3)
+                        db.query(qstr3)
                             .then((res3) => {
                                 return res.render(path.resolve(__dirname + '/../templates/authorPage.twig'),
                                     {
@@ -188,7 +104,7 @@ exports.getAuthor = function (req, res) {
 
 exports.getGenre = function (req, res) {
     let queryStr = 'SELECT * FROM "Genres" WHERE "Id" = ' + req.params.id + ';';
-    client.query(queryStr)
+    db.query(queryStr)
         .then((res1) => {
             if (res1.rows.length) {
                 let subqr = 'SELECT "Book_id"' +
@@ -198,7 +114,7 @@ exports.getGenre = function (req, res) {
                 let qstr2 = 'SELECT "Id", "Book_name"' +
                     'FROM "Books"' +
                     'WHERE "Id" IN (' + subqr + ');';
-                client.query(qstr2)
+                db.query(qstr2)
                     .then((res2) => {
                         //find genre authors
                         let qstr3 = 'SELECT "Id", "First_name", "Surname"' +
@@ -207,7 +123,7 @@ exports.getGenre = function (req, res) {
                             'SELECT "Author_id"' +
                             'FROM "Books_Authors"' +
                             'WHERE "Book_id" IN (' + subqr + '));';
-                        client.query(qstr3)
+                        db.query(qstr3)
                             .then((res3) => {
                                 return res.render(path.resolve(__dirname + '/../templates/genrePage.twig'),
                                     {
