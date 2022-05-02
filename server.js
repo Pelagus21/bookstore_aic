@@ -16,6 +16,10 @@ server.use(bodyParser.urlencoded({
     extended: true
 }));
 
+let cookieParser = require('cookie-parser');
+
+server.use(cookieParser());
+
 server.use(bodyParser.json());
 
 server.use(router);
