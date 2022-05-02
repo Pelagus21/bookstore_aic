@@ -38,4 +38,10 @@ router.get('/author/:id', controller.getAuthor);
 
 router.get('/genre/:id', controller.getGenre);
 
+router.get('/customerProfile', userController.getProfilePage);
+
+router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
+
+router.post('/updateCustomerProfile', userController.updateCustomerProfile);
+
 module.exports.router = router;

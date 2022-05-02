@@ -12,19 +12,17 @@
         .row-item {
             margin: 15px;
         }
-
         li:last-child {
             visibility: hidden;
         }
-
     </style>
 </head>
 
-<body style="background-color: #17a2b8;">
+<body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
     <div class="container-fluid flex-row">
-        <a class="navbar-brand" href="\home">Home</a>
+        <a class="navbar-brand" href="/home">Home</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -38,15 +36,19 @@
 
 <div style="margin-top: 50px;" class="container">
         <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+            <div class="col-md-2"></div>
+            <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
                 <div class="row" style="margin-top: 10px">
                     <div class="col-md-12">
                         <h2 class="text-center text-info" style="padding-top: 10px">{{ book.Book_name }}</h2>
                     </div>
                 </div>
                 <div class="row row-item">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
+                        <img src="{{ book.Image_url }}"
+                             alt="{{ book.Book_name }} title image" class="w-100">
+                    </div>
+                    <div class="col-md-8">
                         <h4 style="display: inline;">Authors: </h4>
                         <ul>
                             {% for author in authors %}
@@ -56,10 +58,7 @@
                                 <li class="h6" style="display: inline;"><a>,</a></li>
                             {% endfor %}
                         </ul>
-                    </div>
-                </div>
-                <div class="row row-item">
-                    <div class="col-md-12">
+
                         <h4 style="display: inline;">Genres: </h4>
                         <ul>
                             {% for genre in genres %}
@@ -69,10 +68,6 @@
                                 <li class="h6" style="display: inline;"><a>,</a></li>
                             {% endfor %}
                         </ul>
-                    </div>
-                </div>
-                <div class="row row-item">
-                    <div class="col-md-12">
                         <h4 style="display: inline;">Description: </h4>
                         <p style="margin-top: 6px">{{ book.Description }}</p>
                     </div>
@@ -104,11 +99,11 @@
                 <div class="row row-item">
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px;" formaction="/addToBasket/{{ book.Id }}" formmethod="post">Put in basket</button>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px; float: right;" formaction="/home">Back</button>
+                        <a href="/home" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 15px; float: right;">Back</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-2"></div>
         </div>
     </div>
 </div>
