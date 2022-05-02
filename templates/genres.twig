@@ -17,7 +17,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
     <div class="container-fluid flex-row">
         <a class="navbar-brand" href="\home">Home</a>
-        <a class="navbar-brand" href="\genres">Genres</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -29,14 +28,22 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
 
-        {% for book in books %}
-            <div class="col-sm">
+    {% for oneGenreWithBooks in res %}
+    <div id="w-50 carouselExampleControls" class="carousel slide mt-5 d-flex justify-content-center"
+         data-ride="carousel">
+        <div class="carousel-inner bg-info">
+
+            <h3 class="text-light ml-3 pt-1">{{ oneGenreWithBooks.genre.Genre_name }}</h3>
+            {% for book in oneGenreWithBooks.books %}
+                {% if (loop.index - 1) % 3 == 0 %}
+                    <div class="carousel-item active">
+                    <div class=" container-fluid mt-3 mb-2 justify-content-center d-inline-flex">
+                {% endif %}
 
                 <div class="card mx-5 h-100" style="width: 18rem;">
-                    <a href="{{ "/book/ %s" | format(book.Id) }}">
+                    <a href="{{ "/book/ %s" | format(book.Book_id) }}">
                         {% set id = book.Book_id %}
                         <img src="{{ book.Image_url }}"
                              alt="Second slide" class="w-100">
@@ -50,11 +57,19 @@
                         </div>
                     </a>
                 </div>
-
-            </div>
-        {% endfor %}
+                {% if (loop.index - 1) % 3 == 2 %}
+                    </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if oneGenreWithBooks.books % 3 != 2 %}
+        </div>
     </div>
+    {% endif %}
+
 </div>
+</div>
+{% endfor %}
 
 
 </body>
