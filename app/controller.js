@@ -21,27 +21,18 @@ exports.getLoginForm = function (req, res) {
     failed = false;
 };
 
-exports.getHomePage = async function (req, res) {
-    let queryStr = 'SELECT "Id", "Genre_name" FROM "Genres"';
+exports.getHomePage = function (req, res) {
+    let queryStr = 'select "Id", "Book_name", "Popularity"\n' +
+        'from "Books" inner join (\n' +
+        'select "Book_id", count(*) as "Popularity"\n' +
+        'from "Books_Orders"\n' +
+        'group by "Book_id") as "Res1" on "Books"."Id" = "Res1"."Book_id"\n' +
+        'order by "Popularity" desc';
 
-    await client.query(queryStr, async (err, result) =>
-    {
-        if (!err)
-        {
-            if (result.rows.length)
-            {
-                let genreWithBooks = [];
-                for(let i = 0; i < result.rows.length; ++i)
-                {
-                    let getBooksOfThisGenre = 'SELECT *' +
-                        'FROM "Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id"' +
-                        'WHERE "Genre_id" = ' + result.rows[i].Id;
-                    genreWithBooks.push(await client.query(getBooksOfThisGenre).then((resInner) =>
-                    {
-                        return {genre: result.rows[i], books: resInner.rows};
-                    }));
-                }
-                return res.render(path.resolve(__dirname + '/../templates/home.twig'), {res: genreWithBooks});
+    client.query(queryStr, async (err, result) => {
+        if (!err) {
+            if (result.rows.length) {
+                return res.render(path.resolve(__dirname + '/../templates/home.twig'), {books: result.rows});
             }
         }
     });
@@ -184,6 +175,31 @@ exports.getAuthor = function (req, res) {
                 res.end("Not found");
             }
         });
+}
+
+exports.getGenres = async function (req, res) {
+    let queryStr = 'SELECT "Id", "Genre_name" FROM "Genres"';
+
+    await client.query(queryStr, async (err, result) => {
+        if (!err) {
+            if (result.rows.length) {
+                let genreWithBooks = [];
+                for (let i = 0; i < result.rows.length; ++i) {
+                    let getBooksOfThisGenre = 'SELECT "Books_Authors"."Book_id", "Book_name", "Description", ' +
+                        '"Price", "Image_url", "Author_id", CONCAT("First_name", \' \', "Surname", ' +
+                        'COALESCE(\'-\' || "Last_name", \'\')) AS "author_name"' +
+                        'FROM (("Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id") ' +
+                        'INNER JOIN "Books_Authors" ON "Books_Authors"."Book_id" = "Books"."Id") INNER JOIN "Authors"' +
+                        'ON "Books_Authors"."Book_id" = "Authors"."Id"' +
+                        'WHERE "Genre_id" = ' + result.rows[i].Id;
+                    genreWithBooks.push(await client.query(getBooksOfThisGenre).then((resInner) => {
+                        return {genre: result.rows[i], books: resInner.rows};
+                    }));
+                }
+                return res.render(path.resolve(__dirname + '/../templates/genres.twig'), {res: genreWithBooks});
+            }
+        }
+    });
 }
 
 exports.getGenre = function (req, res) {
