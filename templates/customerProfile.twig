@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .errLabel{
+            display: none;
+            color: orangered;
+            margin-top: 10px
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
+    <div class="container-fluid flex-row">
+        <a class="navbar-brand" href="\home">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-light ml-4" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 50px; max-width: 600px;  height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-11">
+            <form class="form" id="profileForm" action="/updateCustomerProfile" onsubmit="form_update(event, this);" method="post">
+                <h3 style="margin-top: 20px;" class="text-center text-info">Customer Profile</h3>
+                <div class="form-group" style="margin-top: 10px">
+                    <div class="row">
+                        <div class="col-md-8">
+                        <label class="h6">Login: {{ user.Login }}</label>
+                        <br>
+                        <p></p>
+                        <label class="h6">Email: {{ user.Email }}</label>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button"
+                                    class="btn btn-info btn-md" style="margin-top: 10px;"
+                                    data-toggle="modal" data-target="#deletionModal">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="text-info">Password:</label>
+                    <br>
+                    <input type="password" name="password" id="password_field" class="form-control" value="{{ user.Password }}">
+                    <p id="passwordBlankErr" class="errLabel">Password cannot be blank!</p>
+                </div>
+                <div class="form-group">
+                    <label for="first_name" class="text-info">First name:</label>
+                    <br>
+                    <input type="text" name="first_name" id="first_name_field" class="form-control" placeholder="Empty" value="{{ user.First_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="surname" class="text-info">Surname:</label>
+                    <br>
+                    <input type="text" name="surname" id="surname_field" class="form-control" placeholder="Empty" value="{{ user.Surname }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name" class="text-info">Last name:</label>
+                    <br>
+                    <input type="text" name="last_name" id="last_name_field" class="form-control" placeholder="Empty" value="{{ user.Last_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="birth_date" class="text-info">Birth date: </label>
+                    <br>
+                    <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01" value="{{ user.Birth_date }}"/>
+                </div>
+                {% if updated %}
+                    <div class="form-group">
+                        <h3 style="color: green; margin-top: 20px;">Profile updated!</h3>
+                    </div>
+                {% endif %}
+                <div class="form-group" style="width:100%">
+                    <a href="/home" class="btn btn-info btn-md">Back</a>
+                    <button type="submit" class="btn btn-info btn-md" style="float: right;">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Confirm deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>Do you want to delete your account?</h6>
+            </div>
+            <div class="modal-footer" style="width: 100%">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <form action="/deleteCustomerAccount" method="post">
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    setMaxDate();
+
+    function form_update(event, form) {
+        let first_name = form.first_name.value;
+        let surname = form.surname.value;
+        let password = form.password.value;
+        let last_name = form.last_name.value;
+        let fname = '{{ user.First_name }}';
+        let sname = '{{ user.Surname }}';
+        let lname = '{{ user.Last_name }}';
+        let pass = '{{ user.Password }}';
+        if(fname === first_name && sname === surname && lname === last_name && password === pass) {
+            return event.preventDefault();
+        }
+        if(pass != password && !checkPassword(password)) {
+            event.preventDefault();
+        }
+    }
+
+    function checkPassword(password) {
+        if(password == '') {
+            document.getElementById('passwordBlankErr').style.display = "initial";
+            return false;
+        }
+        if(password.length < 5 || password.length > 50) {
+            let errLabel = document.getElementById('passwordBlankErr');
+            errLabel.innerText = password.length < 5 ? "Password must be at least 5 characters long" :
+                "Password cannot be longer than 50 characters";
+            errLabel.style.display = "initial";
+           return false;
+        }
+        return true;
+    }
+
+    function setMaxDate() {
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth() + 1;
+        let yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("datePicker").setAttribute("max", today);
+    }
+</script>
+
+</body>
+
+</html>
