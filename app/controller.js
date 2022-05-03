@@ -95,7 +95,7 @@ exports.getGenres = async function (req, res) {
 
                         'FROM (("Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id") ' +
                         'INNER JOIN "Books_Authors" ON "Books_Authors"."Book_id" = "Books"."Id") INNER JOIN "Authors"' +
-                        'ON "Books_Authors"."Author_id" = "Authors"."Id"' +
+                        'ON "Books_Authors"."Author_id" = "Authors"."Id"'  +
                         'WHERE "Genre_id" = ' + result.rows[i].Id_of_genre;
                     genreWithBooks.push(await db.query(getBooksOfThisGenre).then((resInner) => {
                         return {genre: result.rows[i], books: resInner.rows};
