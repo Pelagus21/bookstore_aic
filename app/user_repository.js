@@ -42,3 +42,11 @@ exports.updateCustomer = function (username, body) {
         'WHERE "Login" = \'' + username + '\';';
     return db.query(queryStr);
 }
+
+//find admin by credentials
+exports.findAdminByCredentials = function(username, password) {
+    let queryStr = 'SELECT * FROM "Admins" ' +
+        'WHERE "Login" = \'' + username +
+        '\' AND "Password" = \'' + password + '\';';
+    return db.query(queryStr);
+}

@@ -119,3 +119,7 @@ exports.getGenre = function (req, res) {
         }
     });
 }
+
+exports.getAdminHomePage = function(req, res) {
+    res.render(path.resolve(__dirname + '/../templates/adminHome.twig'));
+}

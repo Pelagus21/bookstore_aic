@@ -27,3 +27,16 @@ exports.getGenresOfBook = function (id) {
         'WHERE "Book_id" = ' + id + ');';
     return db.query(queryStr);
 }
+
+//find all books
+exports.getAllBooks = function () {
+    let queryStr = 'SELECT "Id", "Book_name"' +
+        'FROM "Books"';
+    return db.query(queryStr);
+}
+
+//delete book by id
+exports.deleteBook = function (id) {
+    let queryStr = 'DELETE FROM "Books" WHERE "Id" = \'' + id + '\';';
+    return db.query(queryStr);
+}

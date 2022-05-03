@@ -4,7 +4,9 @@ let router = express.Router();
 
 let controller = require('../app/controller');
 
-let userController = require('../app/user_controller')
+let userController = require('../app/user_controller');
+
+let adminController = require('../app/admin_controller');
 
 router.use((req, res, next) => {
     if(!req.user) {
@@ -45,5 +47,13 @@ router.get('/customerProfile', userController.getProfilePage);
 router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
 
 router.post('/updateCustomerProfile', userController.updateCustomerProfile);
+
+router.get('/adminHome', controller.getAdminHomePage);
+
+router.get('/adminBooks', adminController.getAdminBooksPage);
+
+router.post('/deleteBook/:id', adminController.deleteBook);
+
+router.get('/editBook/:id', adminController.getEditBookPage);
 
 module.exports.router = router;
