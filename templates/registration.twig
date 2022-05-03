@@ -49,19 +49,19 @@
                         <label for="first_name" class="text-info">First name</label>
                         <br>
                         <input type="text" id="first_name_field" name="first_name" class="form-control" placeholder="Enter your name (optional)"
-                                {% if userExists %} value="{{ userDTO.first_name }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.First_name }}" {% endif %}/>
                     </div>
                     <div class="form-group">
                         <label for="surname" class="text-info">Surname</label>
                         <br>
                         <input type="text" id="surname_field" name="surname" class="form-control" placeholder="Enter your surname (optional)"
-                                {% if userExists %} value="{{ userDTO.surname }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.Surname }}" {% endif %}/>
                     </div>
                     <div class="form-group">
                         <label for="last_name" class="text-info">Last name</label>
                         <br>
                         <input type="text" id="last_name_field" name="last_name" class="form-control" placeholder="Enter your last name (optional)"
-                                {% if userExists %} value="{{ userDTO.last_name }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.Last_name }}" {% endif %}/>
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@
                         <label for="email" class="text-info">Email *</label>
                         <br>
                         <input type="text" id="email_field" name="email" class="form-control" placeholder="Enter your Email"
-                                {% if userExists %} value="{{ userDTO.email }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.Email }}" {% endif %}/>
                         <br>
                         <p id="emailErr" class="errLabel">Wrong Email format</p>
                     </div>
@@ -78,8 +78,12 @@
                     <div class="form-group">
                         <label for="birth_date" class="text-info">Birth date *</label>
                         <br>
-                        <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01" value="1999-01-01"
-                                {% if userExists %} value="{{ userDTO.birth_date }}" {% endif %}/>
+                        <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01"
+                                {% if userExists %}
+                                    value="{{ userDTO.Birth_date }}"
+                                {% else %}
+                                    value="1999-01-01"
+                                {% endif %}/>
                     </div>
                 </div>
 
@@ -95,7 +99,7 @@
                        <label for="password" class="text-info">Password *</label>
                         <br>
                         <input type="password" id="password_field" name="password" class="form-control" placeholder="Enter your password"
-                                {% if userExists %} value="{{ userDTO.password }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.Password }}" {% endif %}/>
                         <br>
                         <p id="passErr" class="errLabel">Fill the field</p>
                     </div>
@@ -103,7 +107,7 @@
                         <label for="confirm" class="text-info">Confirm password *</label>
                         <br>
                         <input type="password" id="confirm_field" name="confirm" class="form-control" placeholder="Confirm your password"
-                                {% if userExists %} value="{{ userDTO.password }}" {% endif %}/>
+                                {% if userExists %} value="{{ userDTO.Password }}" {% endif %}/>
                         <br>
                         <p id="confirmErr" class="errLabel">Password doesn't match</p>
                     </div>

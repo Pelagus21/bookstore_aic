@@ -40,13 +40,10 @@ router.get('/genre/:id', controller.getGenre);
 
 router.get('/genres', controller.getGenres);
 
-// router.post('/addEmail', controller.addEmail);
-//
-// //used in order to delete item
-// router.get('/deleteEmail/:id', controller.deleteEmail);
-//
-// router.post('/updateEmail/:id', controller.updateEmail);
-//
-// router.post('/sendEmail', controller.sendEmail);
+router.get('/customerProfile', userController.getProfilePage);
+
+router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
+
+router.post('/updateCustomerProfile', userController.updateCustomerProfile);
 
 module.exports.router = router;
