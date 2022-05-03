@@ -178,9 +178,11 @@ exports.getAuthor = function (req, res) {
 }
 
 exports.getGenres = async function (req, res) {
-    let queryStr = 'SELECT "Id", "Genre_name" FROM "Genres"';
+    let getGenresAndNumOfReadBooks = 'SELECT "Helper_genre_num_of_readers"."count", "Helper_genre_num_of_readers"."Id_of_genre", "Genre_name"' +
+        'FROM "Helper_genre_num_of_readers" INNER JOIN "Genres" ON "Genres"."Id" = "Id_of_genre"' +
+        'ORDER BY "count" DESC';
 
-    await client.query(queryStr, async (err, result) => {
+    await client.query(getGenresAndNumOfReadBooks, async (err, result) => {
         if (!err) {
             if (result.rows.length) {
                 let genreWithBooks = [];
@@ -188,10 +190,11 @@ exports.getGenres = async function (req, res) {
                     let getBooksOfThisGenre = 'SELECT "Books_Authors"."Book_id", "Book_name", "Description", ' +
                         '"Price", "Image_url", "Author_id", CONCAT("First_name", \' \', "Surname", ' +
                         'COALESCE(\'-\' || "Last_name", \'\')) AS "author_name"' +
+
                         'FROM (("Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id") ' +
                         'INNER JOIN "Books_Authors" ON "Books_Authors"."Book_id" = "Books"."Id") INNER JOIN "Authors"' +
                         'ON "Books_Authors"."Book_id" = "Authors"."Id"' +
-                        'WHERE "Genre_id" = ' + result.rows[i].Id;
+                        'WHERE "Genre_id" = ' + result.rows[i].Id_of_genre;
                     genreWithBooks.push(await client.query(getBooksOfThisGenre).then((resInner) => {
                         return {genre: result.rows[i], books: resInner.rows};
                     }));

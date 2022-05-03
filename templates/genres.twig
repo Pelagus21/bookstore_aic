@@ -14,6 +14,8 @@
 </head>
 <body>
 
+
+<!-- Nav Bar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
     <div class="container-fluid flex-row">
         <a class="navbar-brand" href="\home">Home</a>
@@ -27,21 +29,32 @@
         </form>
     </div>
 </nav>
+<!-- ~Nav Bar -->
 
+
+<!-- Carousels container -->
 <div class="container-fluid">
 
     {% for oneGenreWithBooks in res %}
-    <div id="w-50 carouselExampleControls" class="carousel slide mt-5 d-flex justify-content-center"
+    <!-- Carousel -->
+    <div id="carouselExampleControls" class="carousel slide h-50 mt-5 d-flex justify-content-center"
          data-ride="carousel">
         <div class="carousel-inner bg-info">
 
-            <h3 class="text-light ml-3 pt-1">{{ oneGenreWithBooks.genre.Genre_name }}</h3>
+            <!-- Carousel Header -->
+            <a href="{{ "/genre/ %s" | format(oneGenreWithBooks.genre.Id_of_genre) }}">
+                <h3 class="text-light ml-3 pt-1">{{ oneGenreWithBooks.genre.Genre_name }}
+                    ({{ oneGenreWithBooks.genre.count }})</h3>
+            </a>
+            <!-- ~Carousel Header -->
             {% for book in oneGenreWithBooks.books %}
+                <!-- Carousel Inner Content -->
                 {% if (loop.index - 1) % 3 == 0 %}
                     <div class="carousel-item active">
                     <div class=" container-fluid mt-3 mb-2 justify-content-center d-inline-flex">
                 {% endif %}
 
+                <!-- Card -->
                 <div class="card mx-5 h-100" style="width: 18rem;">
                     <a href="{{ "/book/ %s" | format(book.Book_id) }}">
                         {% set id = book.Book_id %}
@@ -57,19 +70,22 @@
                         </div>
                     </a>
                 </div>
+                <!-- ~Card -->
                 {% if (loop.index - 1) % 3 == 2 %}
                     </div>
                     </div>
                 {% endif %}
             {% endfor %}
-            {% if oneGenreWithBooks.books % 3 != 2 %}
+            {% if oneGenreWithBooks.books.length % 3 != 0 %}
+                    </div>
+                    </div>
+            {% endif %}
+             <!-- ~Carousel Inner Content -->
+
         </div>
     </div>
-    {% endif %}
-
+    {% endfor %}
 </div>
-</div>
-{% endfor %}
 
 
 </body>
