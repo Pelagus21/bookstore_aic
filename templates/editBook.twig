@@ -35,8 +35,13 @@
 <div class="container" style="margin-top: 50px; max-width: 700px; height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;">
     <div class="row justify-content-center align-items-center">
         <div class="col-md-12">
-            <form class="form" id="updateForm" action="/updateBook/{{ book.Id }}" method="post">
+            <form class="form" id="updateForm" onsubmit="formSubmit(event, this);">
                 <h3 style="margin-top: 20px;" class="text-center text-info">Edit Book:</h3>
+                {% if updated %}
+                    <div class="form-group">
+                        <h5 style="color: green; margin-top: 20px;">Book updated!</h5>
+                    </div>
+                {% endif %}
                 <div class="form-group" style="margin-top: 10px">
                     <label class="h6" for="username" class="text-info">Book name:</label>
                     <br>
@@ -70,10 +75,21 @@
                         <div class="col-md-4">
                             <label class="h6" for="year" class="text-info">Publishing year:</label>
                             <br>
-                            <input type="number" id="yearInput" min="0" name="year" class="form-control" placeholder="Enter publishing year"
+                            <input type="number" id="yearInput" min="0" name="year" class="form-control" placeholder="Enter publishing year (optional)"
                                    value="{{ book.Year_of_publishing }}">
                         </div>
                         <div class="col-md-2"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="h6" for="copies_numb" class="text-info">Number of copies:</label>
+                            <br>
+                            <input type="number" id="copiesInput" min="0" name="copies_numb" class="form-control" placeholder="Enter number of copies"
+                                   value="{{ book.Number_of_copies }}">
+                        </div>
+                        <div class="col-md-8"></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -88,7 +104,7 @@
                                 <div class="col-md-12">
                                     <ul id="authorsList" class="list-group lst">
                                         {% for author in authors %}
-                                            <li id="{{ author.Id }}" class="list-group-item hoverable" onclick="authorClicked({{ author.Id }})">
+                                            <li id="a{{ author.Id }}" class="list-group-item hoverable" onclick="authorClicked({{ author.Id }})">
                                                 {{ author.First_name }} {{ author.Surname }}
                                             </li>
                                         {% endfor %}
@@ -119,7 +135,7 @@
                                 <div class="col-md-12">
                                     <ul id="genresList" class="list-group lst">
                                         {% for genre in genres %}
-                                            <li id="{{ genre.Id }}" class="list-group-item hoverable" onclick="genreClicked({{ genre.Id }})">
+                                            <li id="g{{ genre.Id }}" class="list-group-item hoverable" onclick="genreClicked({{ genre.Id }})">
                                                 {{ genre.Genre_name }}
                                             </li>
                                         {% endfor %}
@@ -163,10 +179,10 @@
 
     function authorClicked(id) {
         if(lastAuthorClickedId != -1) {
-            document.getElementById(lastAuthorClickedId.toString()).style.removeProperty('background-color');
+            document.getElementById('a' + lastAuthorClickedId.toString()).style.removeProperty('background-color');
         }
         if(lastAuthorClickedId != id) {
-            document.getElementById(id.toString()).style = "background-color: #1165ed";
+            document.getElementById('a' + id.toString()).style = "background-color: #1165ed";
             lastAuthorClickedId = id;
         } else
             lastAuthorClickedId = -1;
@@ -174,7 +190,7 @@
 
     function deleteAuthor() {
         if(lastAuthorClickedId != -1) {
-            let item = document.getElementById(lastAuthorClickedId.toString());
+            let item = document.getElementById('a' + lastAuthorClickedId.toString());
             item.parentNode.removeChild(item);
             lastAuthorClickedId = -1;
         }
@@ -182,10 +198,10 @@
 
     function genreClicked(id) {
         if(lastGenreClickedId != -1) {
-            document.getElementById(lastGenreClickedId.toString()).style.removeProperty('background-color');
+            document.getElementById('g' + lastGenreClickedId.toString()).style.removeProperty('background-color');
         }
         if(lastGenreClickedId != id) {
-            document.getElementById(id.toString()).style = "background-color: #1165ed";
+            document.getElementById('g' + id.toString()).style = "background-color: #1165ed";
             lastGenreClickedId = id;
         } else
             lastGenreClickedId = -1;
@@ -193,12 +209,74 @@
 
     function deleteGenre() {
         if(lastGenreClickedId != -1) {
-            let item = document.getElementById(lastGenreClickedId.toString());
+            let item = document.getElementById('g' + lastGenreClickedId.toString());
             item.parentNode.removeChild(item);
             lastGenreClickedId = -1;
         }
     }
+
+    function formSubmit(event, form) {
+        let authorIds = [];
+        let genresIds = [];
+        let authorsList = document.getElementById('authorsList').getElementsByTagName("li");
+        let genresList = document.getElementById('genresList').getElementsByTagName("li");
+        for (let i = 0; i < authorsList.length; i++) {
+            authorIds.push(parseInt(authorsList[i].id.substr(1)));
+        }
+        for (let i = 0; i < genresList.length; i++) {
+            genresIds.push(parseInt(genresList[i].id.substr(1)));
+        }
+        let bookFieldsNotDiffer =   '{{ book.Book_name }}' === form.book_name.value &&
+                                    '{{ book.Description }}' === form.description.value &&
+                                    '{{ book.Image_url }}' === form.url.value &&
+                                    '{{ book.Number_of_copies }}' === form.copies_numb.value &&
+                                    '{{ book.Price }}'.substr(1) === form.price.value &&
+                                    '{{ book.Year_of_publishing }}' === form.year.value;
+
+        let authEq = authorsArraysEqual(authorIds.sort());
+        let genEq = genresArraysEqual(genresIds.sort());
+        if (bookFieldsNotDiffer && authEq && genEq) {
+            return event.preventDefault();
+        }
+        fetch('/updateBook/{{ book.Id }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                "data": {
+                    "book_changed" : !bookFieldsNotDiffer,
+                    "book_name": form.book_name.value,
+                    "description": form.description.value,
+                    "url": form.url.value,
+                    "price": parseFloat(form.price.value),
+                    "copies_numb": parseInt(form.copies_numb.value),
+                    "year": parseInt(form.year.value),
+                    "authors_ids": (!authEq) ? authorIds : undefined,
+                    "genres_ids": (!genEq) ? genresIds : undefined
+                }
+            })
+        });
+    }
+
+    function authorsArraysEqual(idArr) {
+        let arr = [
+            {% for author in authors %}
+                {{ author.Id }} ,
+            {% endfor %}
+        ].sort();
+        return arr.length === idArr.length &&
+            arr.every((value, index) => { return value === idArr[index]});
+    }
+
+    function genresArraysEqual(idArr) {
+        let arr = [
+            {% for genre in genres %}
+                {{ genre.Id }} ,
+            {% endfor %}
+        ].sort();
+        return arr.length === idArr.length &&
+            arr.every((value, index) => { return value === idArr[index]});
+    }
+
 </script>
 </body>
-
 </html>

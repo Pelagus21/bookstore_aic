@@ -39,6 +39,11 @@
             <form class="form" id="profileForm" action="/updateCustomerProfile" onsubmit="form_update(event, this);" method="post">
                 <h3 style="margin-top: 20px;" class="text-center text-info">Customer Profile</h3>
                 <div class="form-group" style="margin-top: 10px">
+                    {% if updated %}
+                        <div class="form-group">
+                            <h5 style="color: green; margin-top: 20px;">Profile updated!</h5>
+                        </div>
+                    {% endif %}
                     <div class="row">
                         <div class="col-md-8">
                         <label class="h6">Login: {{ user.Login }}</label>
@@ -79,11 +84,6 @@
                     <br>
                     <input type="date" id="datePicker" name="birth_date" class="form-control" min="1900-01-01" max="2000-01-01" value="{{ user.Birth_date }}"/>
                 </div>
-                {% if updated %}
-                    <div class="form-group">
-                        <h5 style="color: green; margin-top: 20px;">Profile updated!</h5>
-                    </div>
-                {% endif %}
                 <div class="form-group" style="width:100%">
                     <a href="/home" class="btn btn-info btn-md">Back</a>
                     <button type="submit" class="btn btn-info btn-md" style="float: right;">Update</button>

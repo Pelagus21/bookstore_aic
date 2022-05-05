@@ -56,4 +56,7 @@ router.post('/deleteBook/:id', adminController.deleteBook);
 
 router.get('/editBook/:id', adminController.getEditBookPage);
 
+router.post('/updateBook/:id', adminController.updateBook);
+
+
 module.exports.router = router;

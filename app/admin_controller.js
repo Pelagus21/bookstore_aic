@@ -2,6 +2,8 @@ const path = require('path');
 const bookRepo = require('../app/books_repository');
 
 
+let _bookUpdated = false;
+
 exports.getAdminBooksPage = function (req, res) {
     bookRepo.getAllBooks()
     .then(
@@ -38,35 +40,42 @@ function errorResponse(res, err) {
     res.end('Unknown error');
 }
 
-exports.getEditBookPage = function (req, res) {
-    bookRepo.getBookById(req.params.id)
+exports.getEditBookPage = async function (req, res) {
+    let res1 = await bookRepo.getBookById(req.params.id);
+    if(res1.rows.length) {
+        let res2 = await bookRepo.getGenresOfBook(req.params.id);
+        let res3 = await bookRepo.getAuthorsOfBook(req.params.id);
+        res.render(path.resolve(__dirname + '/../templates/editBook.twig'),
+            {
+                book: res1.rows[0],
+                genres: res2.rows,
+                authors: res3.rows,
+                updated: _bookUpdated
+            });
+        _bookUpdated = false;
+    } else {
+        res.statusCode = 404;
+        res.end("Book not found");
+    }
+}
+
+exports.updateBook = async function (req, res) {
+    bookRepo.updateBookFields(req.params.id, req.body.data)
     .then(
-        (result1) => {
-            bookRepo.getGenresOfBook(req.params.id)
-            .then(
-                (result2) => {
-                    bookRepo.getAuthorsOfBook(req.params.id)
-                    .then(
-                        (result3) => {
-                            res.render(path.resolve(__dirname + '/../templates/editBook.twig'),
-                                {
-                                    book : result1.rows[0],
-                                    genres : result2.rows,
-                                    authors : result3.rows
-                                });
-                        },
-                        (error3) => {
-                            errorResponse(res, error3)
-                        }
-                    );
-                },
-                (error2) => {
-                    errorResponse(res, error2);
-                }
-            );
-        },
-        (error) => {
-            errorResponse(res, error);
+        (result) => {
+            return bookRepo.insertBookAuthors(req.params.id, req.body.data.authors_ids);
+        }
+    )
+    .then(
+        (result) => {
+            return bookRepo.insertBookGenres(req.params.id, req.body.data.genres_ids);
+        }
+    )
+    .then(
+        (result) => {
+            console.log("Book updated");
+            _bookUpdated = true;
+            res.redirect('/editBook/' + req.params.id);
         }
     );
 }
