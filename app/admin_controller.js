@@ -59,7 +59,8 @@ exports.getEditBookPage = async function (req, res) {
     }
 }
 
-exports.updateBook = async function (req, res) {
+
+exports.updateBook = function (req, res) {
     bookRepo.updateBookFields(req.params.id, req.body.data)
     .then(
         (result) => {
@@ -75,7 +76,7 @@ exports.updateBook = async function (req, res) {
         (result) => {
             console.log("Book updated");
             _bookUpdated = true;
-            res.redirect('/editBook/' + req.params.id);
+            res.send('Updated');
         }
     );
 }

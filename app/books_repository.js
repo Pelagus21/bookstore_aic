@@ -88,7 +88,7 @@ exports.insertBookAuthors = function (id, authors_ids) {
                         }
                         return db.query(query2.substr(0, query2.length - 2));
                     }
-                    return new Promise((resolve, reject) => { resolve(true); });
+                    return new Promise((resolve) => { resolve(true); });
                 }
             );
     }
@@ -98,7 +98,6 @@ exports.insertBookAuthors = function (id, authors_ids) {
 exports.deleteBookGenresRelation = function (id) {
     let query1 = 'DELETE FROM "Books_Genres" WHERE "Book_id" = ' + id;
     return db.query(query1)
-    //return new Promise((resolve, reject) => { resolve(true); });
 }
 
 exports.insertBookGenres = function (id, genres_ids) {

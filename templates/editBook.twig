@@ -254,7 +254,13 @@
                     "genres_ids": (!genEq) ? genresIds : undefined
                 }
             })
-        });
+        })
+        .then(
+            (result) => {
+                console.log(result);
+                window.location.replace('/editBook/{{ book.Id }}')
+            }
+        );
     }
 
     function authorsArraysEqual(idArr) {
