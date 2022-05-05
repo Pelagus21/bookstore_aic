@@ -27,3 +27,15 @@ exports.getGenresOfBook = function (id) {
         'WHERE "Book_id" = ' + id + ');';
     return db.query(queryStr);
 }
+
+exports.getBookWithFullInfo = async function (id) {
+    let book = (await exports.getBookById(id)).rows;
+    if(book.length === 0)
+        return [];
+    let authors = (await exports.getAuthorsOfBook(id)).rows;
+    let genres = (await exports.getGenresOfBook(id)).rows;
+    book[0].authors = authors;
+    book[0].genres = genres;
+
+    return book[0];
+}

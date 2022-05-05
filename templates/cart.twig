@@ -20,7 +20,7 @@
             <div class="row row-cols-auto">
                 <a class="navbar-brand col text-light" href="\home">Home</a>
                 <a class="navbar-brand col text-light" href="\genres">Genres</a>
-                <a class="navbar-brand col text-light" href="\cart">Cart</a>
+                <a class="navbar-brand col text-light" href="\genres">Cart</a>
             </div>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -36,40 +36,36 @@
 </nav>
 
 <div class="container">
-    <div class="row">
-
-        {% for book in books %}
-            <div class="col-sm mb-5">
-
-                <div class="card mx-5 h-100 bg-info px-3 pt-3 text-light" style="width: 18rem;">
-                    <a href="{{ "/book/ %s" | format(book.Id) }}">
-                        {% set id = book.Book_id %}
-                        <img src="{{ book.Image_url }}"
-                             alt="Second slide" class="w-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-light">{{ book.Book_name }}</h5>
-                            <a href="{{ "/author/ %s" | format(book.Author_id) }}">
-                                <h5 class="card-title ">{{ book.author_name }}</h5>
-                            </a>
-                            <p class="card-text">{{ book.Price }}</p>
-                            <p class="card-text"> {{ book.Description|length > 50 ? book.Description|slice(0, 50) ~ '...' : book.Description }}</p>
-                            {% if book.Number_of_copies > 0 %}
-                                <a href="{{ "/addToCart/ %s" | format(book.Id) }}">
-                                    <button class="btn btn-light text-info">Add To Cart</button>
-                                </a>
-                            {% endif %}
-                            {% if book.Number_of_copies == 0 %}
-                                <button class="btn btn-light text-info disabled">Out of Stock</button>
-                            {% endif %}
-                        </div>
-                    </a>
+    <table class="table">
+        <tbody>
+        {% if res.books.length == 0 %}
+            <div class="d-flex justify-content-center">
+                <div class="d-flex">
+                    <h1>Your Cart Is Empty</h1>
                 </div>
-
             </div>
+        {% endif %}
+        {% for book in res.books %}
+            <tr>
+                <td>{{ book.Book_name }}</td>
+                <td>{{ "%s %s" | format(book.authors[0].First_name, book.authors[0].Surname) }}</td>
+                <td>{{ book.Price }}</td>
+            </tr>
+            {% set counter = counter + book.Price %}
         {% endfor %}
-    </div>
+        </tbody>
+    </table>
+    {% if res.books.length != 0 %}
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">Total: {{ res.total }}</div>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <a href="\order">
+                <button type="button" class="btn btn-info">Make an Order</button>
+            </a>
+        </div>
+    {% endif %}
 </div>
-
 
 </body>
 </html>

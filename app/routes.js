@@ -40,10 +40,19 @@ router.get('/genre/:id', controller.getGenre);
 
 router.get('/genres', controller.getGenres);
 
+router.get('/addToCart/:id', controller.addToCart);
+
+router.get('/cart', controller.cart);
+
+router.get('/order', controller.order);
+
 router.get('/customerProfile', userController.getProfilePage);
 
 router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
 
 router.post('/updateCustomerProfile', userController.updateCustomerProfile);
+
+router.put('/createOrder', controller.createOrder);
+
 
 module.exports.router = router;
