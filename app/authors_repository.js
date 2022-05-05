@@ -30,3 +30,8 @@ exports.getGenresOfAuthor = function (id) {
         'WHERE "Author_id" = ' +id + '));';
     return db.query(queryStr);
 }
+
+exports.getAllAuthors = function () {
+    let qstr = 'SELECT * FROM "Authors"';
+    return db.query(qstr);
+}

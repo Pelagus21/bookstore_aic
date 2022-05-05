@@ -1,6 +1,7 @@
 const path = require('path');
 const bookRepo = require('../app/books_repository');
-
+const genreRepo = require('../app/genres_repository');
+const authorRepo = require('../app/authors_repository');
 
 let _bookUpdated = false;
 
@@ -45,11 +46,15 @@ exports.getEditBookPage = async function (req, res) {
     if(res1.rows.length) {
         let res2 = await bookRepo.getGenresOfBook(req.params.id);
         let res3 = await bookRepo.getAuthorsOfBook(req.params.id);
+        let res4 = await genreRepo.getAllGenres();
+        let res5 = await authorRepo.getAllAuthors();
         res.render(path.resolve(__dirname + '/../templates/editBook.twig'),
             {
                 book: res1.rows[0],
                 genres: res2.rows,
                 authors: res3.rows,
+                all_genres: res4.rows,
+                all_authors: res5.rows,
                 updated: _bookUpdated
             });
         _bookUpdated = false;
