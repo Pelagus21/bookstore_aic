@@ -28,14 +28,15 @@ exports.getGenresOfBook = function (id) {
     return db.query(queryStr);
 }
 
-exports.getBookWithFullInfo = async function (id) {
-    let book = (await exports.getBookById(id)).rows;
-    if(book.length === 0)
-        return [];
-    let authors = (await exports.getAuthorsOfBook(id)).rows;
-    let genres = (await exports.getGenresOfBook(id)).rows;
-    book[0].authors = authors;
-    book[0].genres = genres;
+//find all books
+exports.getAllBooks = function () {
+    let queryStr = 'SELECT "Id", "Book_name"' +
+        'FROM "Books"';
+    return db.query(queryStr);
+}
 
-    return book[0];
+//delete book by id
+exports.deleteBook = function (id) {
+    let queryStr = 'DELETE FROM "Books" WHERE "Id" = \'' + id + '\';';
+    return db.query(queryStr);
 }

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .errLabel {
+            display: none;
+            color: orangered;
+            margin-top: 10px
+        }
+        .hoverable:hover {
+            background-color: #96afd9;
+        }
+
+        .hoverable {
+            margin: 5px;
+        }
+        .lst {
+            background-color: white;
+            resize: vertical;
+            height: 120px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+<!-- Place for navbar -->
+<div class="container" style="margin-top: 50px; max-width: 700px; height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-12">
+            <form class="form" id="updateForm" action="/updateBook/{{ book.Id }}" method="post">
+                <h3 style="margin-top: 20px;" class="text-center text-info">Edit Book:</h3>
+                <div class="form-group" style="margin-top: 10px">
+                    <label class="h6" for="username" class="text-info">Book name:</label>
+                    <br>
+                    <input type="text" name="book_name" class="form-control" placeholder="Enter your book name"
+                        value="{{ book.Book_name }}">
+                    <p id="bookNameBlankErr" class="errLabel">Book name cannot be blank!</p>
+                </div>
+                <div class="form-group">
+                    <label class="h6" for="description" class="text-info">Description:</label>
+                    <br>
+                    <textarea name="description"
+                              class="form-control"
+                              rows="4"
+                              placeholder="Enter book description">{{ book.Description }}</textarea>
+                    <p id="descriptionBlankErr" class="errLabel">Description cannot be blank!</p>
+                </div>
+                <div class="form-group">
+                    <label class="h6" for="url" class="text-info">Image URL:</label>
+                    <br>
+                    <input type="url" name="url" class="form-control" placeholder="Enter image url (optional)"
+                           value="{{ book.Image_url }}">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="h6" for="price" class="text-info">Price:</label>
+                            <br>
+                            <input type="number" id="priceInput" min="0.00" step="0.01" name="price" class="form-control" placeholder="Enter book price">
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4">
+                            <label class="h6" for="year" class="text-info">Publishing year:</label>
+                            <br>
+                            <input type="number" id="yearInput" min="0" name="year" class="form-control" placeholder="Enter publishing year"
+                                   value="{{ book.Year_of_publishing }}">
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="h6" class="text-info">Authors:</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul id="authorsList" class="list-group lst">
+                                        {% for author in authors %}
+                                            <li id="{{ author.Id }}" class="list-group-item hoverable" onclick="authorClicked({{ author.Id }})">
+                                                {{ author.First_name }} {{ author.Surname }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 5px">
+                                <div class="col-md-12">
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            onclick="deleteAuthor()"
+                                            style="margin-right: 2px">Delete</button>
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            style="margin-left: 2px"
+                                            data-toggle="modal"
+                                            data-target="#addModal">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="h6" class="text-info">Genres:</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul id="genresList" class="list-group lst">
+                                        {% for genre in genres %}
+                                            <li id="{{ genre.Id }}" class="list-group-item hoverable" onclick="genreClicked({{ genre.Id }})">
+                                                {{ genre.Genre_name }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 5px">
+                               <div class="col-md-12">
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            onclick="deleteGenre()"
+                                            style="margin-right: 2px">Delete</button>
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            style="margin-left: 2px"
+                                            data-toggle="modal"
+                                            data-target="#addModal">Add</button>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="width:100%; margin-top: 10px">
+                    <a href="/adminBooks" class="btn btn-primary btn-md">Back</a>
+                    <button type="submit" class="btn btn-primary btn-md" style="float: right;">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    let lastAuthorClickedId = -1;
+    let lastGenreClickedId = -1;
+
+    setMaxYearAndPrice();
+
+    function setMaxYearAndPrice() {
+        document.getElementById('yearInput').setAttribute("max", new Date().getFullYear().toString());
+        document.getElementById('priceInput').setAttribute("value", "{{ book.Price }}".substr(1));
+    }
+
+    function authorClicked(id) {
+        if(lastAuthorClickedId != -1) {
+            document.getElementById(lastAuthorClickedId.toString()).style.removeProperty('background-color');
+        }
+        if(lastAuthorClickedId != id) {
+            document.getElementById(id.toString()).style = "background-color: #1165ed";
+            lastAuthorClickedId = id;
+        } else
+            lastAuthorClickedId = -1;
+    }
+
+    function deleteAuthor() {
+        if(lastAuthorClickedId != -1) {
+            let item = document.getElementById(lastAuthorClickedId.toString());
+            item.parentNode.removeChild(item);
+            lastAuthorClickedId = -1;
+        }
+    }
+
+    function genreClicked(id) {
+        if(lastGenreClickedId != -1) {
+            document.getElementById(lastGenreClickedId.toString()).style.removeProperty('background-color');
+        }
+        if(lastGenreClickedId != id) {
+            document.getElementById(id.toString()).style = "background-color: #1165ed";
+            lastGenreClickedId = id;
+        } else
+            lastGenreClickedId = -1;
+    }
+
+    function deleteGenre() {
+        if(lastGenreClickedId != -1) {
+            let item = document.getElementById(lastGenreClickedId.toString());
+            item.parentNode.removeChild(item);
+            lastGenreClickedId = -1;
+        }
+    }
+</script>
+</body>
+
+</html>

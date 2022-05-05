@@ -1,5 +1,4 @@
 const path = require('path');
-const db = require('../app/db_connection');
 const userRepo = require('../app/user_repository');
 const crypto = require('crypto');
 
@@ -31,9 +30,22 @@ exports.logIn = function (req, res) {
                 res.cookie('AuthToken', token);
                 res.redirect('/home');
             } else {
-                console.log("Authentication failed!");
-                failed = true;
-                res.redirect('/login');
+                userRepo.findAdminByCredentials(req.body.username, req.body.password)
+                .then(
+                    (res2) => {
+                        if(res2.rows.length) {
+                            console.log("Admin authenticated");
+                            let token = generateAuthToken();
+                            authTokens[token] = res2.rows[0];
+                            res.cookie('AuthToken', token);
+                            res.redirect('/adminHome');
+                        } else {
+                            console.log("Authentication failed!");
+                            failed = true;
+                            res.redirect('/login');
+                        }
+                    }
+                );
             }
         },
         (error) => {

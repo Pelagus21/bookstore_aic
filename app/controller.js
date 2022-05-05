@@ -154,3 +154,7 @@ exports.createOrder = function (req, res)
                                 '"Delivery_date", "Creation_date")' +
         'VALUES();';
 }
+
+exports.getAdminHomePage = function(req, res) {
+    res.render(path.resolve(__dirname + '/../templates/adminHome.twig'));
+}

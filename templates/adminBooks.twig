@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Books View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .row-item {
+            margin: 15px;
+        }
+        .list-col{
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+<!-- Place for navbar -->
+<div style="margin-top: 50px;" class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <h2 class="text-center text-info" style="padding-top: 10px">Books:</h2>
+                </div>
+            </div>
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <a href="/addBook" class="btn btn-primary">Add Book</a>
+                </div>
+            </div>
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        {% for book in books %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-1 list-col">
+                                    <h5>{{ book.Id }}</h5>
+                                </div>
+                                <div class="col-md-7 list-col">
+                                    <h5>{{ book.Book_name }}</h5>
+                                </div>
+                                <div class="col-md-2 list-col">
+                                    <a href="/editBook/{{ book.Id }}" class="btn btn-primary">Edit</a>
+                                </div>
+                                <div class="col-md-2 list-col">
+                                    <button type="button" class="btn btn-primary"
+                                            onclick="delClick({{ book.Id }}, '{{ book.Book_name }}')"
+                                            data-toggle="modal" data-target="#deletionModal">Delete</button>
+                                </div>
+                            </div>
+                        </li>
+                        {%  endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="row row-item">
+                <div class="col-md-12">
+                    <a href="/adminHome" class="btn btn-primary">Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Confirm deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6 id="modalBodyText"></h6>
+            </div>
+            <div class="modal-footer" style="width: 100%">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <form id="delForm" action="" method="post">
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function delClick(bookId, bookName) {
+        document.getElementById('modalBodyText').innerHTML = "Delete \"" + bookName + "\" book?";
+        document.getElementById('delForm').action = '/deleteBook/'+ bookId;
+    }
+</script>
+</body>
+</html>
