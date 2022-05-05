@@ -4,9 +4,10 @@ const db = require('../app/db_connection');
 const genresRepo = require('../app/genres_repository');
 const authorsRepo = require('../app/authors_repository');
 const booksRepo = require('../app/books_repository');
+const ordersRepo = require('../app/order_repository');
 
 exports.getHomePage = function (req, res) {
-    let queryStr = 'select "Id", "Book_name", "Popularity"\n' +
+    let queryStr = 'select "Id", "Book_name", "Popularity", "Description", "Price", "Image_url", "Number_of_copies"' +
         'from "Books" inner join (\n' +
         'select "Book_id", count(*) as "Popularity"\n' +
         'from "Books_Orders"\n' +
@@ -22,51 +23,62 @@ exports.getHomePage = function (req, res) {
     });
 }
 
+exports.addToCart = function (req, res) {
+    ordersRepo.addToCart(req.params.id);
+    res.redirect('/home');
+}
+
+exports.cart = async function (req, res) {
+    return res.render(path.resolve(__dirname + '/../templates/cart.twig'), {
+        res: await ordersRepo.getBooks()
+    });
+}
+
 //get book page by id
 exports.getBook = function (req, res) {
     booksRepo.getBookById(req.params.id)
-    .then((res1) => {
-        if (res1.rows.length) {
-            booksRepo.getAuthorsOfBook(req.params.id)
-            .then((res2) => {
-                booksRepo.getGenresOfBook(req.params.id)
-                .then((res3) => {
-                    return res.render(path.resolve(__dirname + '/../templates/bookPage.twig'),
-                        {
-                            book: res1.rows[0],
-                            authors: res2.rows,
-                            genres: res3.rows
-                        });
-                });
-            });
-        } else {
-            res.statusCode = 404;
-            res.end("Not found");
-        }
-    });
+        .then((res1) => {
+            if (res1.rows.length) {
+                booksRepo.getAuthorsOfBook(req.params.id)
+                    .then((res2) => {
+                        booksRepo.getGenresOfBook(req.params.id)
+                            .then((res3) => {
+                                return res.render(path.resolve(__dirname + '/../templates/bookPage.twig'),
+                                    {
+                                        book: res1.rows[0],
+                                        authors: res2.rows,
+                                        genres: res3.rows
+                                    });
+                            });
+                    });
+            } else {
+                res.statusCode = 404;
+                res.end("Not found");
+            }
+        });
 }
 
 exports.getAuthor = function (req, res) {
     authorsRepo.getAuthorById(req.params.id)
-    .then((res1) => {
-        if (res1.rows.length) {
-            authorsRepo.getBooksOfAuthor(req.params.id)
-            .then((res2) => {
-                authorsRepo.getGenresOfAuthor(req.params.id)
-                .then((res3) => {
-                    return res.render(path.resolve(__dirname + '/../templates/authorPage.twig'),
-                        {
-                            author: res1.rows[0],
-                            books: res2.rows,
-                            genres: res3.rows
-                        });
-                });
-            });
-        } else {
-            res.statusCode = 404;
-            res.end("Not found");
-        }
-    });
+        .then((res1) => {
+            if (res1.rows.length) {
+                authorsRepo.getBooksOfAuthor(req.params.id)
+                    .then((res2) => {
+                        authorsRepo.getGenresOfAuthor(req.params.id)
+                            .then((res3) => {
+                                return res.render(path.resolve(__dirname + '/../templates/authorPage.twig'),
+                                    {
+                                        author: res1.rows[0],
+                                        books: res2.rows,
+                                        genres: res3.rows
+                                    });
+                            });
+                    });
+            } else {
+                res.statusCode = 404;
+                res.end("Not found");
+            }
+        });
 }
 
 exports.getGenres = async function (req, res) {
@@ -95,7 +107,7 @@ exports.getGenres = async function (req, res) {
 
                         'FROM (("Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id") ' +
                         'INNER JOIN "Books_Authors" ON "Books_Authors"."Book_id" = "Books"."Id") INNER JOIN "Authors"' +
-                        'ON "Books_Authors"."Author_id" = "Authors"."Id"'  +
+                        'ON "Books_Authors"."Author_id" = "Authors"."Id"' +
                         'WHERE "Genre_id" = ' + result.rows[i].Id_of_genre;
                     genreWithBooks.push(await db.query(getBooksOfThisGenre).then((resInner) => {
                         return {genre: result.rows[i], books: resInner.rows};
@@ -109,25 +121,38 @@ exports.getGenres = async function (req, res) {
 
 exports.getGenre = function (req, res) {
     genresRepo.getGenreById(req.params.id)
-    .then((res1) => {
-        if (res1.rows.length) {
-            genresRepo.getBooksInGenre(req.params.id)
-            .then((res2) => {
-                genresRepo.getAuthorsOfGenre(req.params.id)
-                .then((res3) => {
-                    return res.render(path.resolve(__dirname + '/../templates/genrePage.twig'),
-                        {
-                            genre: res1.rows[0],
-                            books: res2.rows,
-                            authors: res3.rows
-                        });
-                });
-            });
-        } else {
-            res.statusCode = 404;
-            res.end("Not found");
-        }
-    });
+        .then((res1) => {
+            if (res1.rows.length) {
+                genresRepo.getBooksInGenre(req.params.id)
+                    .then((res2) => {
+                        genresRepo.getAuthorsOfGenre(req.params.id)
+                            .then((res3) => {
+                                return res.render(path.resolve(__dirname + '/../templates/genrePage.twig'),
+                                    {
+                                        genre: res1.rows[0],
+                                        books: res2.rows,
+                                        authors: res3.rows
+                                    });
+                            });
+                    });
+            } else {
+                res.statusCode = 404;
+                res.end("Not found");
+            }
+        });
+}
+
+exports.order = function (req, res)
+{
+    return res.render(path.resolve(__dirname + '/../templates/order.twig'));
+}
+
+exports.createOrder = function (req, res)
+{
+    let getGenresAndNumOfReadBooks =
+        'INSERT INTO "Orders" ("Address", "Phone_number_1", "Phone_number_2", "Phone_number_3", ' +
+                                '"Delivery_date", "Creation_date")' +
+        'VALUES();';
 }
 
 exports.getAdminHomePage = function(req, res) {

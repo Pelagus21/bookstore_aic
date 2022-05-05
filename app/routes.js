@@ -42,6 +42,12 @@ router.get('/genre/:id', controller.getGenre);
 
 router.get('/genres', controller.getGenres);
 
+router.get('/addToCart/:id', controller.addToCart);
+
+router.get('/cart', controller.cart);
+
+router.get('/order', controller.order);
+
 router.get('/customerProfile', userController.getProfilePage);
 
 router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
@@ -55,6 +61,9 @@ router.get('/adminBooks', adminController.getAdminBooksPage);
 router.post('/deleteBook/:id', adminController.deleteBook);
 
 router.get('/editBook/:id', adminController.getEditBookPage);
+
+router.put('/createOrder', controller.createOrder);
+
 
 router.post('/updateBook/:id', adminController.updateBook);
 

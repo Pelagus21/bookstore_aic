@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
+    <div class="container-fluid flex-row">
+        <div class="container">
+            <div class="row row-cols-auto">
+                <a class="navbar-brand col text-light" href="\home">Home</a>
+                <a class="navbar-brand col text-light" href="\genres">Genres</a>
+                <a class="navbar-brand col text-light" href="\genres">Cart</a>
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-light ml-4" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <form action="/createOrder" method="put">
+        <div class="form-group">
+            <label for="exampleInputEmail1">Address*</label>
+            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Address">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Phone Number*</label>
+            <input type="phone" class="form-control" id="exampleInputPassword1" placeholder="Phone Number">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Phone Number Additional</label>
+            <input type="phone" class="form-control" id="exampleInputPassword1" placeholder="Phone Number Additional">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Phone Number Additional</label>
+            <input type="phone" class="form-control" id="exampleInputPassword1" placeholder="Phone Number Additional">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>
