@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Books View</title>
+    <title>Admin Authors View</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -39,12 +39,12 @@
         <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
             <div class="row row-item">
                 <div class="col-md-12">
-                    <h2 class="text-center text-info" style="padding-top: 10px">Books:</h2>
+                    <h2 class="text-center text-info" style="padding-top: 10px">Authors:</h2>
                 </div>
             </div>
             <div class="row row-item">
                 <div class="col-md-12">
-                    <a href="/addBook" class="btn btn-primary">Add Book</a>
+                    <a href="/addAuthor" class="btn btn-primary">Add Author</a>
                 </div>
             </div>
             <div class="row row-item">
@@ -55,11 +55,8 @@
                                 <div class="col-md-1 list-col header-col">
                                     <h6 class="col-name">Id</h6>
                                 </div>
-                                <div class="col-md-4 list-col header-col">
-                                    <h6 class="col-name">Book name</h6>
-                                </div>
-                                <div class="col-md-2 list-col header-col">
-                                    <h6 class="col-name">Copies available</h6>
+                                <div class="col-md-6 list-col header-col">
+                                    <h6 class="col-name">Name and Surname</h6>
                                 </div>
 
                                 <div class="col-md-2 list-col header-col">
@@ -68,34 +65,31 @@
                                 <div class="col-md-3 list-col"></div>
                             </div>
                         </li>
-                        {% for book in books %}
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-1 list-col value-col">
-                                    <h5>{{ book.Id }}</h5>
-                                </div>
-                                <div class="col-md-4 list-col value-col">
-                                    <h5>{{ book.Book_name }}</h5>
-                                </div>
-                                <div class="col-md-2 list-col value-col">
-                                    <h5>{{ book.Number_of_copies }}</h5>
-                                </div>
+                        {% for author in authors %}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-1 list-col value-col">
+                                        <h5>{{ author.Id }}</h5>
+                                    </div>
+                                    <div class="col-md-6 list-col value-col">
+                                        <h5>{{ author.First_name }} {{ author.Surname }}</h5>
+                                    </div>
 
-                                <div class="col-md-2 list-col value-col">
-                                    <h5>{{ book.Popularity }}</h5>
-                                </div>
+                                    <div class="col-md-2 list-col value-col">
+                                        <h5 id="h{{ author.Id }}"></h5>
+                                    </div>
 
-                                <div class="col-md-3 list-col value-col">
-                                    <a href="/editBook/{{ book.Id }}" class="btn btn-primary">Edit</a>
-                                    <button type="button"
-                                            class="btn btn-primary"
-                                            style="margin-left: 5px"
-                                            onclick="delClick({{ book.Id }}, '{{ book.Book_name }}')"
-                                            data-toggle="modal"
-                                            data-target="#deletionModal">Delete</button>
+                                    <div class="col-md-3 list-col value-col">
+                                        <a href="/editAuthor/{{ author.Id }}" class="btn btn-primary">Edit</a>
+                                        <button type="button"
+                                                class="btn btn-primary"
+                                                style="margin-left: 5px"
+                                                onclick="delClick({{ author.Id }}, '{{ author.First_name }} {{ author.Surname }}')"
+                                                data-toggle="modal"
+                                                data-target="#deletionModal">Delete</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
                         {%  endfor %}
                     </ul>
                 </div>
@@ -132,9 +126,20 @@
     </div>
 </div>
 <script>
-    function delClick(bookId, bookName) {
-        document.getElementById('modalBodyText').innerHTML = "Delete \"" + bookName + "\" book?";
-        document.getElementById('delForm').action = '/deleteBook/'+ bookId;
+
+    setPopularity();
+
+    function setPopularity() {
+        let popularity;
+        {% for auth in authors %}
+        popularity = Number(({{ auth.Popularity }}).toFixed(1));
+        document.getElementById("h{{ auth.Id }}").innerText = popularity.toString();
+        {% endfor %}
+    }
+
+    function delClick(authorId, authorNameSurname) {
+        document.getElementById('modalBodyText').innerHTML = "Delete \"" + authorNameSurname + "\" book?";
+        document.getElementById('delForm').action = '/deleteAuthor/'+ authorId;
     }
 </script>
 </body>

@@ -66,5 +66,8 @@ router.put('/createOrder', controller.createOrder);
 
 router.post('/updateBook/:id', adminController.updateBook);
 
+router.get('/adminAuthors', adminController.getAdminAuthorsPage);
+
+//router.get('/statistics', adminController.getStatsPage);
 
 module.exports.router = router;

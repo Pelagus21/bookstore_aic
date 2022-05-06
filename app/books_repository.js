@@ -30,7 +30,7 @@ exports.getGenresOfBook = function (id) {
 
 //find all books
 exports.getAllBooks = function () {
-    let queryStr = 'SELECT "Id", "Book_name"' +
+    let queryStr = 'SELECT "Id", "Book_name", "Number_of_copies"' +
         'FROM "Books"';
     return db.query(queryStr);
 }
@@ -117,4 +117,15 @@ exports.insertBookGenres = function (id, genres_ids) {
             );
     }
     return new Promise((resolve) => { resolve(true); });
+}
+
+//get books sorted by popularity
+exports.getBooksSortedByPopularity = function () {
+    let qstr = 'SELECT "Id", "Book_name", "Number_of_copies", COALESCE("Entry_number", 0) AS "Popularity" ' +
+        'FROM "Books" LEFT JOIN ( ' +
+        'SELECT "Book_id", COUNT(*) AS "Entry_number"' +
+        'FROM "Books_Orders"' +
+        'GROUP BY "Book_id") AS "Res1" ON "Books"."Id" = "Res1"."Book_id"' +
+        'ORDER BY "Popularity" DESC';
+    return db.query(qstr);
 }

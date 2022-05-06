@@ -6,7 +6,7 @@ const authorRepo = require('../app/authors_repository');
 let _bookUpdated = false;
 
 exports.getAdminBooksPage = function (req, res) {
-    bookRepo.getAllBooks()
+    bookRepo.getBooksSortedByPopularity()
     .then(
         (result) => {
             res.render(path.resolve(__dirname + '/../templates/adminBooks.twig'),
@@ -84,4 +84,19 @@ exports.updateBook = function (req, res) {
             res.send('Updated');
         }
     );
+}
+
+exports.getAdminAuthorsPage = function (req, res) {
+    authorRepo.getAuthorsSortedByPopularity()
+        .then(
+            (result) => {
+                res.render(path.resolve(__dirname + '/../templates/adminAuthors.twig'),
+                    {authors : result.rows});
+            },
+            (error) => {
+                console.log(error);
+                res.statusCode = 500;
+                res.end('Unknown error');
+            }
+        );
 }

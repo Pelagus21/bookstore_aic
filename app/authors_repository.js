@@ -35,3 +35,19 @@ exports.getAllAuthors = function () {
     let qstr = 'SELECT * FROM "Authors"';
     return db.query(qstr);
 }
+
+//get authors sorted by popularity
+exports.getAuthorsSortedByPopularity = function () {
+    let qstr = 'SELECT "Id", "First_name", "Surname", COALESCE("Auth_popularity", 0) AS "Popularity"' +
+        'FROM "Authors" LEFT JOIN (' +
+            'SELECT "Author_id", SUM(COALESCE("Book_popularity", 0)) / COUNT(*) AS "Auth_popularity"' +
+            'FROM "Books_Authors" LEFT JOIN (' +
+                'SELECT "Book_id", COUNT(*) AS "Book_popularity"' +
+                'FROM "Books_Orders"' +
+                'GROUP BY "Book_id"' +
+            ') AS "R2" ON "Books_Authors"."Book_id" = "R2"."Book_id"' +
+            'GROUP BY "Author_id"' +
+        ') AS "R1" ON "Authors"."Id" = "R1"."Author_id"' +
+        'ORDER BY "Popularity" DESC';
+    return db.query(qstr);
+}
