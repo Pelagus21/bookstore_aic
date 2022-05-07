@@ -5,6 +5,7 @@ const genresRepo = require('../app/genres_repository');
 const authorsRepo = require('../app/authors_repository');
 const booksRepo = require('../app/books_repository');
 const ordersRepo = require('../app/order_repository');
+const usersRepo = require('../app/user_repository');
 
 exports.getHomePage = function (req, res) {
     let queryStr = 'select "Id", "Book_name", "Popularity", "Description", "Price", "Image_url", "Number_of_copies"' +
@@ -203,11 +204,19 @@ exports.queries = async function (req, res) {
     let res1 = await genresRepo.countBookInEveryGenre();
     let res2 = await genresRepo.booksNoOneBought();
     let res4 = await genresRepo.countsBooksFromEachAuthor();
+
     let allAuthors = await authorsRepo.getAllAuthors();
+    let res3 = new Map();
+    for(let i = 0; i < allAuthors.rows.length; ++i)
+    {
+        let t = await usersRepo.usersThatBoughtAllBooksOfAuthor(allAuthors.rows[i].Id);
+        res3.set(allAuthors.rows[i].Surname, t.rows);
+    }
     return res.render(path.resolve(__dirname + '/../templates/queries.twig'), {
         all_authors: allAuthors.rows,
         res1 : res1.rows,
         res2 : res2.rows,
+        res3 : res3,
         res4 : res4.rows
     });
 }

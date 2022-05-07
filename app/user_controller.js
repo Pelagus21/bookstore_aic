@@ -16,7 +16,6 @@ exports.authTokens = authTokens;
 
 exports.getLoginForm = function (req, res) {
     res.render(path.resolve(__dirname + '/../templates/login.twig'), {failed: failed});
-    userRepo.usersThatBoughtAllBooksOfAuthor(2);
     failed = false;
 };
 

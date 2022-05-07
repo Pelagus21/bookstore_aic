@@ -45,7 +45,11 @@
         document.getElementById('result2').style.display = "block";
     }
     let fillRes3 = async () => {
-        document.getElementById('result3').style.display = "block";
+        let paragraph = document.getElementById("result3");
+        let text = document.createTextNode("dsjka");
+
+        paragraph.appendChild(text);
+        paragraph.style.display = "block";
     }
     let fillRes4 = async () => {
         document.getElementById('result4').style.display = "block";
