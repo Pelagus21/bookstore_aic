@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Authors View</title>
+    <title>Admin Genres View</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -39,12 +39,12 @@
         <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
             <div class="row row-item">
                 <div class="col-md-12">
-                    <h2 class="text-center text-info" style="padding-top: 10px">Authors:</h2>
+                    <h2 class="text-center text-info" style="padding-top: 10px">Genres:</h2>
                 </div>
             </div>
             <div class="row row-item">
                 <div class="col-md-12">
-                    <a href="/addAuthor" class="btn btn-primary">Add Author</a>
+                    <a href="/addGenre" class="btn btn-primary">Add Genre</a>
                 </div>
             </div>
             <div class="row row-item">
@@ -56,35 +56,38 @@
                                     <h6 class="col-name">Id</h6>
                                 </div>
                                 <div class="col-md-6 list-col header-col">
-                                    <h6 class="col-name">Name and Surname</h6>
+                                    <h6 class="col-name">Genre name</h6>
                                 </div>
-
+                                {% if flagP %}
                                 <div class="col-md-2 list-col header-col">
                                     <h6 class="col-name">Popularity</h6>
                                 </div>
                                 <div class="col-md-3 list-col"></div>
+                                {% else %}
+                                <div class="col-md-5"></div>
+                                {% endif %}
                             </div>
                         </li>
-                        {% for author in authors %}
+                        {% for genre in genres %}
                             <li class="list-group-item">
                                 <div class="row">
                                     <div class="col-md-1 list-col value-col">
-                                        <h5>{{ author.Id }}</h5>
+                                        <h5>{{ genre.Id }}</h5>
                                     </div>
                                     <div class="col-md-6 list-col value-col">
-                                        <h5>{{ author.First_name }} {{ author.Surname }}</h5>
+                                        <h5>{{ genre.Genre_name }}</h5>
                                     </div>
 
                                     <div class="col-md-2 list-col value-col">
-                                        <h5 id="h{{ author.Id }}"></h5>
+                                        <h5 id="h{{ genre.Id }}"></h5>
                                     </div>
 
                                     <div class="col-md-3 list-col value-col">
-                                        <a href="/editAuthor/{{ author.Id }}" class="btn btn-primary">Edit</a>
+                                        <a href="/editGenre/{{ genre.Id }}" class="btn btn-primary">Edit</a>
                                         <button type="button"
                                                 class="btn btn-primary"
                                                 style="margin-left: 5px"
-                                                onclick="delClick({{ author.Id }}, '{{ author.First_name }} {{ author.Surname }}')"
+                                                onclick="delClick({{ genre.Id }}, '{{ genre.Genre_name }}')"
                                                 data-toggle="modal"
                                                 data-target="#deletionModal">Delete</button>
                                     </div>
@@ -127,19 +130,20 @@
 </div>
 <script>
 
+    {% if flagP %}
     setPopularity();
 
     function setPopularity() {
         let popularity;
-        {% for auth in authors %}
-        popularity = Number(({{ auth.Popularity }}).toFixed(1));
-        document.getElementById("h{{ auth.Id }}").innerText = popularity.toString();
+        {% for genre in genres %}
+        popularity = Number(({{ genre.Popularity }}).toFixed(1));
+        document.getElementById("h{{ genre.Id }}").innerText = popularity.toString();
         {% endfor %}
     }
-
-    function delClick(authorId, authorNameSurname) {
-        document.getElementById('modalBodyText').innerHTML = "Delete \"" + authorNameSurname + "\" author?";
-        document.getElementById('delForm').action = '/deleteAuthor/'+ authorId;
+    {% endif %}
+    function delClick(genreId, genreName) {
+        document.getElementById('modalBodyText').innerHTML = "Delete \"" + genreName + "\" genre?";
+        document.getElementById('delForm').action = '/deleteGenre/'+ genreId;
     }
 </script>
 </body>

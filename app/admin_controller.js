@@ -35,6 +35,20 @@ exports.deleteBook = function(req, res) {
     );
 }
 
+exports.deleteAuthor = function(req, res) {
+    authorRepo.deleteAuthor(req.params.id)
+        .then(
+            (result) => {
+                console.log("Author deleted");
+                res.redirect('/adminAuthor');
+            },
+            (error) => {
+                console.log(error);
+                res.end('Cannot delete author who currently has books');
+            }
+        );
+}
+
 function errorResponse(res, err) {
     console.log(err);
     res.statusCode = 500;
@@ -92,6 +106,42 @@ exports.getAdminAuthorsPage = function (req, res) {
             (result) => {
                 res.render(path.resolve(__dirname + '/../templates/adminAuthors.twig'),
                     {authors : result.rows});
+            },
+            (error) => {
+                console.log(error);
+                res.statusCode = 500;
+                res.end('Unknown error');
+            }
+        );
+}
+
+exports.getAdminGenresPage = function (req, res) {
+    genreRepo.getGenresSortedByPopularity()
+        .then(
+            (result) => {
+                res.render(path.resolve(__dirname + '/../templates/adminGenres.twig'),
+                    {
+                        genres : result.rows,
+                        flagP : true
+                    });
+            },
+            (error) => {
+                console.log(error);
+                res.statusCode = 500;
+                res.end('Unknown error');
+            }
+        );
+}
+
+exports.getGenresInAllOrders = function (req, res) {
+    genreRepo.getGenresInAllOrders()
+        .then(
+            (result) => {
+                res.render(path.resolve(__dirname + '/../templates/adminGenres.twig'),
+                    {
+                        genres : result.rows,
+                        flagP : false
+                    });
             },
             (error) => {
                 console.log(error);

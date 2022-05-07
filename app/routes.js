@@ -68,6 +68,8 @@ router.post('/updateBook/:id', adminController.updateBook);
 
 router.get('/adminAuthors', adminController.getAdminAuthorsPage);
 
-//router.get('/statistics', adminController.getStatsPage);
+router.get('/adminGenres', adminController.getAdminGenresPage);
+
+router.get('/genresInAllOrders', adminController.getGenresInAllOrders);
 
 module.exports.router = router;

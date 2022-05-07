@@ -36,6 +36,11 @@ exports.getAllAuthors = function () {
     return db.query(qstr);
 }
 
+exports.deleteAuthor = function (id) {
+    let qstr = 'DELETE FROM "Authors" WHERE "Id" = ' + id;
+    db.query(qstr);
+}
+
 //get authors sorted by popularity
 exports.getAuthorsSortedByPopularity = function () {
     let qstr = 'SELECT "Id", "First_name", "Surname", COALESCE("Auth_popularity", 0) AS "Popularity"' +
