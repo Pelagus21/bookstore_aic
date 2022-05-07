@@ -72,4 +72,6 @@ router.get('/adminGenres', adminController.getAdminGenresPage);
 
 router.get('/genresInAllOrders', adminController.getGenresInAllOrders);
 
+router.get('/possibleFriends', controller.possibleFriends);
+
 module.exports.router = router;

@@ -5,6 +5,7 @@ const genresRepo = require('../app/genres_repository');
 const authorsRepo = require('../app/authors_repository');
 const booksRepo = require('../app/books_repository');
 const ordersRepo = require('../app/order_repository');
+const genreRepo = require("./genres_repository");
 
 exports.getHomePage = function (req, res) {
     let queryStr = 'select "Id", "Book_name", "Popularity", "Description", "Price", "Image_url", "Number_of_copies"' +
@@ -13,21 +14,6 @@ exports.getHomePage = function (req, res) {
         'from "Books_Orders"\n' +
         'group by "Book_id") as "Res1" on "Books"."Id" = "Res1"."Book_id"\n' +
         'order by "Popularity" desc';
-    let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +
-        'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
-        'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
-
-    let currUserLogin = 'gleb2001';
-    let bookFriends = 'SELECT * ' +
-        'FROM "Customers" AS "Outer"' +
-        'WHERE NOT EXISTS (SELECT * ' +
-        'FROM "Books"' +
-        'WHERE EXISTS(SELECT * ' +
-        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
-        'WHERE "Login" = \'' + currUserLogin + '\' AND "Books"."Id" = "CustomersToBooks"."Book_id")' +
-        'AND NOT EXISTS (SELECT * ' +
-        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
-        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id")) AND "Login" != \'' + currUserLogin + '\'';
 
 
     db.query(queryStr, async (err, result) => {
@@ -171,4 +157,47 @@ exports.createOrder = function (req, res) {
 
 exports.getAdminHomePage = function (req, res) {
     res.render(path.resolve(__dirname + '/../templates/adminHome.twig'));
+}
+
+exports.possibleFriends = async function (req, res) {
+
+    let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +
+        'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
+        'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
+
+    let currUserLogin = req.user.Login/*'sasha123'*/;
+    let bookFriends = 'SELECT * ' +
+        'FROM "Customers" AS "Outer"' +
+        'WHERE NOT EXISTS (SELECT * ' +
+        'FROM "Books"' +
+        'WHERE EXISTS(SELECT * ' +
+        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+        'WHERE "Login" = \'' + currUserLogin + '\' AND "Books"."Id" = "CustomersToBooks"."Book_id")' +
+        'AND NOT EXISTS (SELECT * ' +
+        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id")) AND "Login" != \'' + currUserLogin + '\'';
+
+    let usersQ;
+    let booksWithPriceQ;
+    await db.query(bookFriends, (err, result) => {
+        if (!err) {
+            exports.averagePrice();
+            usersQ = result.rows;
+
+        }
+    });
+    await exports.averagePrice().then(res=> {
+        booksWithPriceQ = res.rows;
+    })
+    return res.render(path.resolve(__dirname + '/../templates/possibleFriends.twig'), {users: usersQ, booksWithPrice: booksWithPriceQ});
+}
+
+
+
+exports.averagePrice = function () {
+    let qstr = 'SELECT coalesce(AVG("Price"::numeric), 0.00) AS AvgPrice, "Genres"."Genre_name"' +
+               'FROM ("Genres" LEFT JOIN "Books_Genres" ON "Id" = "Genre_id") LEFT JOIN "Books" ON "Books"."Id" = "Book_id"' +
+               'GROUP BY "Genres"."Genre_name"' +
+               'ORDER BY coalesce(AVG("Price"::numeric), 0.00) DESC';
+    return db.query(qstr);
 }

@@ -21,7 +21,9 @@
         {% for book in books %}
             <div class="col-sm mb-5">
 
-                <div class="card mx-5 h-100 bg-info px-3 pt-3 text-light" style="width: 18rem;">
+                {% include '../views/bookCard.twig' with {book: book} %}
+
+                {#<div class="card mx-5 h-100 bg-info px-3 pt-3 text-light" style="width: 18rem;">
                     <a href="{{ "/book/ %s" | format(book.Id) }}">
                         {% set id = book.Book_id %}
                         <img src="{{ book.Image_url }}"
@@ -43,7 +45,7 @@
                             {% endif %}
                         </div>
                     </a>
-                </div>
+                </div>#}
 
             </div>
         {% endfor %}

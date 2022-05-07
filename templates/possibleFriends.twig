@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+
+{% include '../views/navBar.twig'%}
+
+<div class="container">
+    {% if users.length == 0%}
+        <h1 class = "my-5"> Your taste is so unique, no one has read all your books!</h1>
+    {% else %}
+        <h1 class = "mb-5">People that bough all your books: </h1>
+    {% endif %}
+    <ul class="list-group">
+        {% for user in users %}
+        <li class="list-group-item">{{ user.Login }} - {{ "%s %s" | format(user.First_name, user.Surname) }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="container">
+    <h1 class = "my-5"> Average books price: </h1>
+    <ul class="list-group">
+        {% for bookToPrice in booksWithPrice %}
+        <li class="list-group-item">{{ bookToPrice.Genre_name }} - {{ bookToPrice.avgprice|number_format(2) }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>
