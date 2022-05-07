@@ -14,26 +14,8 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
-    <div class="container-fluid flex-row">
-        <div class="container">
-            <div class="row row-cols-auto">
-                <a class="navbar-brand col text-light" href="\home">Home</a>
-                <a class="navbar-brand col text-light" href="\genres">Genres</a>
-                <a class="navbar-brand col text-light" href="\genres">Cart</a>
-            </div>
-        </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-light ml-4" type="submit">Search</button>
-        </form>
-    </div>
-</nav>
+
+{% include '../views/navBar.twig'%}
 
 <div class="container">
     <form action="/createOrder" method="put">

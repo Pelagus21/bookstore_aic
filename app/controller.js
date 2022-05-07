@@ -13,6 +13,22 @@ exports.getHomePage = function (req, res) {
         'from "Books_Orders"\n' +
         'group by "Book_id") as "Res1" on "Books"."Id" = "Res1"."Book_id"\n' +
         'order by "Popularity" desc';
+    let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +
+                            'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
+                            'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
+
+    let currUserLogin = 'gleb2001';
+    let bookFriends = 'SELECT * ' +
+                      'FROM "Customers" AS "Outer"' +
+                      'WHERE NOT EXISTS (SELECT * ' +
+                                        'FROM "Books"' +
+                                        'WHERE EXISTS(SELECT * ' +
+                                                     'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+                                                     'WHERE "Login" = \'' + currUserLogin + '\' AND "Books"."Id" = "CustomersToBooks"."Book_id")' +
+                                        'AND NOT EXISTS (SELECT * ' +
+                                                        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+                                                        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id")) AND "Login" != \'' + currUserLogin + '\'';
+
 
     db.query(queryStr, async (err, result) => {
         if (!err) {
@@ -82,16 +98,6 @@ exports.getAuthor = function (req, res) {
 }
 
 exports.getGenres = async function (req, res) {
-    let queryStr = 'SELECT "Id", "Genre_name" FROM "Genres"';
-    let getGenresAndNumOfReadBooksHelper = '(SELECT COUNT("Books_Orders"."Book_id"), "Genres"."Id" AS "Id_of_genre"' +
-        'FROM ("Genres" INNER JOIN "Books_Genres" ON "Id" = "Genre_id")' +
-        'INNER JOIN "Books_Orders" ON "Books_Orders"."Book_id" = "Books_Genres"."Book_id"' +
-        'GROUP BY "Genres"."Id")';
-
-    /*let viewDeleteQuery = 'DROP VIEW IF EXISTS "Helper_genre_num_of_readers"';
-    let viewCreationQuery = 'CREATE VIEW "Helper_genre_num_of_readers" AS' + getGenresAndNumOfReadBooksHelper;
-    client.query(viewDeleteQuery);
-    client.query(viewCreationQuery);*/
     let getGenresAndNumOfReadBooks = 'SELECT "Helper_genre_num_of_readers"."count", "Helper_genre_num_of_readers"."Id_of_genre", "Genre_name"' +
         'FROM "Helper_genre_num_of_readers" INNER JOIN "Genres" ON "Genres"."Id" = "Id_of_genre"' +
         'ORDER BY "count" DESC';
@@ -105,10 +111,10 @@ exports.getGenres = async function (req, res) {
                         '"Price", "Image_url", "Author_id", CONCAT("First_name", \' \', "Surname", ' +
                         'COALESCE(\'-\' || "Last_name", \'\')) AS "author_name"' +
 
-                        'FROM (("Books_Genres" INNER JOIN "Books" ON "Book_id" = "Id") ' +
+                        'FROM (((SELECT * FROM "Books_Genres" WHERE "Genre_id" = ' + result.rows[i].Id_of_genre + ') AS "Books_this_genre"' +
+                        ' INNER JOIN "Books" ON "Book_id" = "Id") ' +
                         'INNER JOIN "Books_Authors" ON "Books_Authors"."Book_id" = "Books"."Id") INNER JOIN "Authors"' +
-                        'ON "Books_Authors"."Author_id" = "Authors"."Id"' +
-                        'WHERE "Genre_id" = ' + result.rows[i].Id_of_genre;
+                        'ON "Books_Authors"."Author_id" = "Authors"."Id"';
                     genreWithBooks.push(await db.query(getBooksOfThisGenre).then((resInner) => {
                         return {genre: result.rows[i], books: resInner.rows};
                     }));
