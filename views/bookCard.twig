@@ -1,0 +1,23 @@
+
+<div class="card mx-5">
+    <a href="{{ "/book/ %s" | format(book.Book_id) }}" class="d-flex justify-content-center">
+        {% set id = book.Book_id %}
+        {% if book.Image_url == ''%}
+            <img src="https://cdn2.mhpbooks.com/2016/09/no-books.jpg" class = "align-self-center"
+                 alt="Second slide" class="w-100" style="height: 230px;width: 100px;">
+        {% else %}
+            <img src="{{ book.Image_url}}" class = "align-self-center"
+                 alt="Second slide" class="w-100" style="max-height: 230px;max-width: 75px;">
+        {% endif %}
+        <div class="card-body" class="w-100" style="max-height: 230px;max-width: 150px;">
+            <h6 class="card-title text-justify">{{ book.Book_name }}</h6>
+            <a href="{{ "/author/ %s" | format(book.Author_id) }}">
+                <h6 class="card-title text-justify">{{ book.author_name }}</h6>
+            </a>
+            <h6 class="card-text text-justify">{{ book.Price }}</h6>
+        </div>
+    </a>
+    <a href="{{ "/addToCart/ %s" | format(book.Book_id) }}" class="d-flex justify-content-center">
+        <button class="btn btn-info text-light">Add To Cart</button>
+    </a>
+</div>

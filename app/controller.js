@@ -14,20 +14,20 @@ exports.getHomePage = function (req, res) {
         'group by "Book_id") as "Res1" on "Books"."Id" = "Res1"."Book_id"\n' +
         'order by "Popularity" desc';
     let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +
-                            'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
-                            'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
+        'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
+        'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
 
     let currUserLogin = 'gleb2001';
     let bookFriends = 'SELECT * ' +
-                      'FROM "Customers" AS "Outer"' +
-                      'WHERE NOT EXISTS (SELECT * ' +
-                                        'FROM "Books"' +
-                                        'WHERE EXISTS(SELECT * ' +
-                                                     'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
-                                                     'WHERE "Login" = \'' + currUserLogin + '\' AND "Books"."Id" = "CustomersToBooks"."Book_id")' +
-                                        'AND NOT EXISTS (SELECT * ' +
-                                                        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
-                                                        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id")) AND "Login" != \'' + currUserLogin + '\'';
+        'FROM "Customers" AS "Outer"' +
+        'WHERE NOT EXISTS (SELECT * ' +
+        'FROM "Books"' +
+        'WHERE EXISTS(SELECT * ' +
+        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+        'WHERE "Login" = \'' + currUserLogin + '\' AND "Books"."Id" = "CustomersToBooks"."Book_id")' +
+        'AND NOT EXISTS (SELECT * ' +
+        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id")) AND "Login" != \'' + currUserLogin + '\'';
 
 
     db.query(queryStr, async (err, result) => {
@@ -98,8 +98,18 @@ exports.getAuthor = function (req, res) {
 }
 
 exports.getGenres = async function (req, res) {
+    let getGenresAndNumOfReadBooksHelper = '(SELECT COUNT("Books_Orders"."Book_id"), "Genres"."Id" AS "Id_of_genre"' +
+        'FROM ("Genres" LEFT JOIN "Books_Genres" ON "Id" = "Genre_id")' +
+        'LEFT JOIN "Books_Orders" ON "Books_Orders"."Book_id" = "Books_Genres"."Book_id"' +
+        'GROUP BY "Genres"."Id")';
+
+    let viewDeleteQuery = 'DROP VIEW IF EXISTS "Helper_genre_num_of_readers"';
+    let viewCreationQuery = 'CREATE VIEW "Helper_genre_num_of_readers" AS' + getGenresAndNumOfReadBooksHelper;
+    await db.query(viewDeleteQuery);
+    await db.query(viewCreationQuery);
+
     let getGenresAndNumOfReadBooks = 'SELECT "Helper_genre_num_of_readers"."count", "Helper_genre_num_of_readers"."Id_of_genre", "Genre_name"' +
-        'FROM "Helper_genre_num_of_readers" INNER JOIN "Genres" ON "Genres"."Id" = "Id_of_genre"' +
+        'FROM "Helper_genre_num_of_readers" RIGHT JOIN "Genres" ON "Genres"."Id" = "Id_of_genre"' +
         'ORDER BY "count" DESC';
 
     await db.query(getGenresAndNumOfReadBooks, async (err, result) => {
@@ -148,19 +158,17 @@ exports.getGenre = function (req, res) {
         });
 }
 
-exports.order = function (req, res)
-{
+exports.order = function (req, res) {
     return res.render(path.resolve(__dirname + '/../templates/order.twig'));
 }
 
-exports.createOrder = function (req, res)
-{
+exports.createOrder = function (req, res) {
     let getGenresAndNumOfReadBooks =
         'INSERT INTO "Orders" ("Address", "Phone_number_1", "Phone_number_2", "Phone_number_3", ' +
-                                '"Delivery_date", "Creation_date")' +
+        '"Delivery_date", "Creation_date")' +
         'VALUES();';
 }
 
-exports.getAdminHomePage = function(req, res) {
+exports.getAdminHomePage = function (req, res) {
     res.render(path.resolve(__dirname + '/../templates/adminHome.twig'));
 }

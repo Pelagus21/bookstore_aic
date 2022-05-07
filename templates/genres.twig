@@ -14,63 +14,54 @@
 </head>
 <body>
 
-{% include '../views/navBar.twig'%}
+{% include '../views/navBar.twig' %}
 
 
 <!-- Carousels container -->
-<div class="container-fluid">
+<div class="container-fluid mb-5">
 
     {% for oneGenreWithBooks in res %}
-    <!-- Carousel -->
-    <div id="carouselExampleControls" class="carousel slide h-50 mt-5 d-flex justify-content-center"
-         data-ride="carousel">
-        <div class="carousel-inner bg-info">
+        {% if oneGenreWithBooks.books.length > 0 %}
+            <!-- Carousel -->
+            <div id="carouselExampleControls" class="carousel slide h-50 mt-5 d-flex justify-content-center"
+                 data-ride="carousel">
+                <div class="carousel-inner bg-info">
 
-            <!-- Carousel Header -->
-            <a href="{{ "/genre/ %s" | format(oneGenreWithBooks.genre.Id_of_genre) }}">
-                <h3 class="text-light ml-3 pt-1">{{ oneGenreWithBooks.genre.Genre_name }}
-                    ({{ oneGenreWithBooks.genre.count }})</h3>
-            </a>
-            <!-- ~Carousel Header -->
-            {% for book in oneGenreWithBooks.books %}
-                <!-- Carousel Inner Content -->
-                {% if (loop.index - 1) % 3 == 0 %}
-                    <div class="carousel-item active">
-                    <div class=" container-fluid mt-3 mb-2 justify-content-center d-inline-flex">
-                {% endif %}
-
-                <!-- Card -->
-                <div class="card mx-5">
-                    <a href="{{ "/book/ %s" | format(book.Book_id) }}">
-                        {% set id = book.Book_id %}
-                        <img src="{{ book.Image_url }}"
-                             alt="Second slide" class="w-100" style="max-height: 230px;max-width: 75px;">
-                        <div class="card-body">
-                            <h6 class="card-title">{{ book.Book_name }}</h6>
-                            <a href="{{ "/author/ %s" | format(book.Author_id) }}">
-                                <h6 class="card-title">{{ book.author_name }}</h6>
-                            </a>
-                            <h6 class="card-text">{{ book.Price }}</h6>
-                        </div>
+                    <!-- Carousel Header -->
+                    <a href="{{ "/genre/ %s" | format(oneGenreWithBooks.genre.Id_of_genre) }}">
+                        <h3 class="text-light ml-3 pt-1">{{ oneGenreWithBooks.genre.Genre_name }}
+                            ({{ oneGenreWithBooks.genre.count }})</h3>
                     </a>
-                        <a href="{{ "/addToCart/ %s" | format(book.Book_id) }}">
-                            <button class="btn btn-light text-info">Add To Cart</button>
-                        </a>
-                </div>
-                <!-- ~Card -->
-                {% if (loop.index - 1) % 3 == 2 %}
-                    </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if oneGenreWithBooks.books.length % 3 != 0 %}
-                    </div>
-                    </div>
-            {% endif %}
-             <!-- ~Carousel Inner Content -->
+                    <!-- ~Carousel Header -->
+                    {% for book in oneGenreWithBooks.books %}
+                    <!-- Carousel Inner Content -->
+                    {% if loop.index == 1 %}
+                    <div class="carousel-item active">
+                        <div class=" container-fluid mt-3 mb-2 justify-content-center d-inline-flex">
+                            {% endif %}
 
-        </div>
-    </div>
+                            {% if (loop.index - 1) % 3 == 0 and loop.index > 1 %}
+                            <div class="carousel-item">
+                                <div class=" container-fluid mt-3 mb-2 justify-content-center d-inline-flex">
+                                    {% endif %}
+
+                                    {% include '../views/bookCard.twig' with {book: book} %}
+
+
+                                    {% if (loop.index - 1) % 3 == 2 %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% if oneGenreWithBooks.books.length % 3 != 0 %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <!-- ~Carousel Inner Content -->
+
+                </div>
+            </div>
+        {% endif %}
     {% endfor %}
 </div>
 
