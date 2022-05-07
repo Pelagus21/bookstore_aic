@@ -5,7 +5,6 @@ const genresRepo = require('../app/genres_repository');
 const authorsRepo = require('../app/authors_repository');
 const booksRepo = require('../app/books_repository');
 const ordersRepo = require('../app/order_repository');
-const genreRepo = require("./genres_repository");
 
 exports.getHomePage = function (req, res) {
     let queryStr = 'select "Id", "Book_name", "Popularity", "Description", "Price", "Image_url", "Number_of_copies"' +
@@ -192,12 +191,23 @@ exports.possibleFriends = async function (req, res) {
     return res.render(path.resolve(__dirname + '/../templates/possibleFriends.twig'), {users: usersQ, booksWithPrice: booksWithPriceQ});
 }
 
-
-
 exports.averagePrice = function () {
     let qstr = 'SELECT coalesce(AVG("Price"::numeric), 0.00) AS AvgPrice, "Genres"."Genre_name"' +
                'FROM ("Genres" LEFT JOIN "Books_Genres" ON "Id" = "Genre_id") LEFT JOIN "Books" ON "Books"."Id" = "Book_id"' +
                'GROUP BY "Genres"."Genre_name"' +
                'ORDER BY coalesce(AVG("Price"::numeric), 0.00) DESC';
     return db.query(qstr);
+}
+
+exports.queries = async function (req, res) {
+    let res1 = await genresRepo.countBookInEveryGenre();
+    let res2 = await genresRepo.booksNoOneBought();
+    let res4 = await genresRepo.countsBooksFromEachAuthor();
+    let allAuthors = await authorsRepo.getAllAuthors();
+    return res.render(path.resolve(__dirname + '/../templates/queries.twig'), {
+        all_authors: allAuthors.rows,
+        res1 : res1.rows,
+        res2 : res2.rows,
+        res4 : res4.rows
+    });
 }

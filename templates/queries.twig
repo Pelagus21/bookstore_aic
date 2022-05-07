@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-info text-white container-fluid mb-5">
+    <div class="container-fluid flex-row">
+        <div class="container">
+            <div class="row row-cols-auto">
+                <a class="navbar-brand col text-light" href="\home">Home</a>
+                <a class="navbar-brand col text-light" href="\genres">Genres</a>
+                <a class="navbar-brand col text-light" href="\genres">Cart</a>
+                <a class="navbar-brand col text-light" href="\queries">Queries</a>
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-light ml-4" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+
+<script>
+    let fillRes1 = async () => {
+        document.getElementById('result1').style.display = "block";
+    }
+    let fillRes2 = async () => {
+        document.getElementById('result2').style.display = "block";
+    }
+    let fillRes3 = async () => {
+        document.getElementById('result3').style.display = "block";
+    }
+    let fillRes4 = async () => {
+        document.getElementById('result4').style.display = "block";
+    }
+
+</script>
+
+<div style="margin-left: 15px;">
+    1. Порахувати кількість книжок в кожному жанрі.
+    <button type="submit" class="btn btn-primary" style="margin-left: 15px; margin-bottom: 15px;" onclick="fillRes1()">Run Query</button>
+</div>
+<div style="margin-left: 15px; display:none;" id = "result1">
+    {% for row in res1 %}
+        <div>{{ row.Genre_name }} - {{ row.NumberOfBooks }}</div>
+    {% endfor %}
+</div>
+<div style="margin-left: 15px;">
+    2. Знайти книжки, які не придбали жодного разу.
+    <button type="submit" class="btn btn-primary" style="margin-left: 15px; margin-bottom: 15px;" onclick="fillRes2()">Run Query</button>
+</div>
+<div style="margin-left: 15px; display:none;" id = "result2">
+    {% for row in res2 %}
+        <div>{{ row.Book_name }}</div>
+    {% endfor %}
+</div>
+<div style="margin-left: 15px;">
+    3. Знайти покупців, які придбали усі книги конкретного автора.
+    <button type="submit" class="btn btn-primary" style="margin-left: 15px; margin-bottom: 15px;" onclick="fillRes3()">Run Query</button>
+    <br/>
+    <select name="authors">
+        {% for auth in all_authors %}
+            <option value="{{ auth.First_name }} {{ auth.Surname }}">{{ auth.First_name }} {{ auth.Surname }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div style="margin-left: 15px; display:none;" id = "result3">
+
+</div>
+<div style="margin-left: 15px;">
+    4. Порахувати скільки в магазині книжок написаних кожним автором.
+    <button type="submit" class="btn btn-primary" style="margin-left: 15px; margin-bottom: 15px;" onclick="fillRes4()">Run Query</button>
+</div>
+<div style="margin-left: 15px; display:none;" id = "result4">
+    {% for row in res4 %}
+        <div>{{ row.AuthorName }} - {{ row.NumberOfBooks }}</div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

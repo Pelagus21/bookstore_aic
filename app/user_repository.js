@@ -34,7 +34,7 @@ exports.deleteCustomer = function (username) {
 
 exports.updateCustomer = function (username, body) {
     let queryStr = 'UPDATE "Customers" SET ' +
-        '"First_name" = \'' + body.first_name + '\', '+
+        '"First_name" = \'' + body.first_name + '\', ' +
         '"Surname" = \'' + body.surname + '\', ' +
         '"Last_name" = \'' + body.last_name + '\', ' +
         '"Password" = \'' + body.password + '\', ' +
@@ -44,9 +44,30 @@ exports.updateCustomer = function (username, body) {
 }
 
 //find admin by credentials
-exports.findAdminByCredentials = function(username, password) {
+exports.findAdminByCredentials = function (username, password) {
     let queryStr = 'SELECT * FROM "Admins" ' +
         'WHERE "Login" = \'' + username +
         '\' AND "Password" = \'' + password + '\';';
     return db.query(queryStr);
+}
+
+exports.usersThatBoughtAllBooksOfAuthor = function (author_id) {
+    let booksOfAuthor = 'SELECT "Book_id" ' +
+        'FROM ("Books" LEFT JOIN "Books_Authors" ON "Id" = "Book_id") LEFT JOIN "Authors" ON "Authors"."Id" = "Author_id"' +
+        'WHERE "Authors"."Id" = ' + author_id;
+    let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +
+        'FROM ("Orders" INNER JOIN "Customers" ON "Customer_login" = "Login")' +
+        'INNER JOIN "Books_Orders" ON "Order_id" = "Orders"."Id"';
+    let query = 'SELECT * ' +
+        'FROM "Customers" AS "Outer"' +
+        'WHERE NOT EXISTS (SELECT * ' +
+        'FROM "Books"' +
+        'WHERE EXISTS(SELECT * ' +
+        'FROM (' + booksOfAuthor + ') AS "BooksOfAuthor" ' +
+        'WHERE "Books"."Id" = "BooksOfAuthor"."Book_id")' +
+        'AND NOT EXISTS (SELECT * ' +
+        'FROM (' + CustomersToBooks + ') AS "CustomersToBooks" ' +
+        'WHERE "Login" = "Outer"."Login" AND "Books"."Id" = "CustomersToBooks"."Book_id"))';
+    return db.query(query);
+
 }

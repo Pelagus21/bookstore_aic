@@ -96,3 +96,29 @@ exports.getGenresInAllOrders = function () {
 //         ')';
 //     return db.query(qstr);
 // }
+
+exports.countBookInEveryGenre = function () {
+    let queryHelperStr = 'SELECT *' +
+        'FROM "Books" INNER JOIN "Books_Genres" ON "Books"."Id" = "Books_Genres"."Book_id"';
+    let qstr = 'SELECT "Genres"."Genre_name", COUNT("QueryHelper"."Id") AS "NumberOfBooks"' +
+        'FROM "Genres" LEFT JOIN (' + queryHelperStr + ') AS "QueryHelper" ON "Genres"."Id" = "QueryHelper"."Genre_id"' +
+        'GROUP BY "Genres"."Genre_name";';
+    return db.query(qstr);
+}
+
+exports.booksNoOneBought = function () {
+    let qstr = 'SELECT "Books"."Book_name"' +
+        'FROM "Books"' +
+        'WHERE "Books"."Id" NOT IN ( SELECT DISTINCT "Books_Orders"."Book_id"' +
+        'FROM "Books_Orders" );';
+    return db.query(qstr);
+}
+
+exports.countsBooksFromEachAuthor = function () {
+    let queryHelperStr = 'SELECT *' +
+        'FROM "Books" INNER JOIN "Books_Authors" ON "Books"."Id" = "Books_Authors"."Book_id"';
+    let qstr = 'SELECT "Authors"."Id", CONCAT("Authors"."First_name", \' \', "Authors"."Surname") AS "AuthorName", COUNT("QueryHelper"."Id") AS "NumberOfBooks"' +
+        'FROM "Authors" LEFT JOIN (' + queryHelperStr + ') AS "QueryHelper" ON "Authors"."Id" = "QueryHelper"."Author_id"' +
+        'GROUP BY "Authors"."Id";';
+    return db.query(qstr);
+}
