@@ -1,21 +1,21 @@
 const db = require('../app/db_connection');
 const booksRepo = require('../app/books_repository');
 
-order = [1];
+order = new Map();
 
 exports.addToCart = function (book_id) {
-    if (order.indexOf(book_id) === -1) {
-        order.push(book_id);
+    if (Array.from( order.keys()).indexOf(book_id) === -1) {
+        order.set(book_id, 1);
         console.log(order);
     }
 }
 
 exports.getBooks = async function () {
     let res = {books: [], total: 0};
-    for (let book_id of order) {
-        let b = await booksRepo.getBookWithFullInfo(book_id);
+    for (let [key, value] of order) {
+        let b = await booksRepo.getBookWithFullInfo(key);
         res.books.push(b);
-        res.total += Number(b.Price.replace(/[^0-9.-]+/g, ""));
+        res.total += Number(b.Price.replace(/[^0-9.-]+/g, "")) * value;
     }
     return res;
 }
@@ -53,7 +53,7 @@ exports.performOrder = function (body) {
         let queryStr = `INSERT INTO "Books_Orders" ("Order_id", "Book_id", "Copies_quantity")` +
             ` values `;
         for (let i = 0; i < order.length; ++i) {
-            queryStr += `( ${orderId}, ${order[i]}, 1),`
+            queryStr += `( ${orderId}, ${order[i].key}, ${order[i].value}),`
         }
         queryStr = queryStr.slice(0, -1);//remove last comma
 
@@ -63,11 +63,23 @@ exports.performOrder = function (body) {
             /*decrease number of book copies in books relation*/
             let queryToDecreaseNumberOfCopies = 'UPDATE "Books" \n' +
                 'SET "Number_of_copies" = "Number_of_copies" - 1\n' +
-                `WHERE "Id" = ANY(ARRAY[${order.toString()}])`
-            order = [];
+                `WHERE "Id" = ANY(ARRAY[${Array.from( order.keys()).toString()}])`
+            order = new Map();
             db.query(queryToDecreaseNumberOfCopies);
 
         });
     });
     return;
+}
+
+exports.getAllUserOrders = function (user) {
+    // let queryStr = 'SELECT * FROM "Orders" WHERE "User_login" = user'
+    let queryStr = 'SELECT * ' +
+        `FROM "Books_Orders" INNER JOIN 
+        (SELECT * FROM "Orders" WHERE "Customer_login" = \' + ${user}) ON "Order_id" = "Orders"."Id"` +
+        'GROUP BY "Order_id"' +
+        'WHERE "Customer_login" = ' + user;
+    db.query(queryStr).then(res => {
+        let i = 0;
+    })
 }
