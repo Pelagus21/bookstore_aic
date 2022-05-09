@@ -62,7 +62,9 @@ router.post('/deleteBook/:id', adminController.deleteBook);
 
 router.get('/editBook/:id', adminController.getEditBookPage);
 
-router.put('/createOrder', controller.createOrder);
+router.post('/createOrder', controller.createOrder);
+
+router.post('/registration', userController.registerUser);
 
 router.post('/updateBook/:id', adminController.updateBook);
 

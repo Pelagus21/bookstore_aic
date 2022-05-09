@@ -149,10 +149,9 @@ exports.order = function (req, res) {
 }
 
 exports.createOrder = function (req, res) {
-    let getGenresAndNumOfReadBooks =
-        'INSERT INTO "Orders" ("Address", "Phone_number_1", "Phone_number_2", "Phone_number_3", ' +
-        '"Delivery_date", "Creation_date")' +
-        'VALUES();';
+    req.body.user =req.user;
+    ordersRepo.performOrder(req.body);
+    res.redirect('/home');
 }
 
 exports.getAdminHomePage = function (req, res) {
