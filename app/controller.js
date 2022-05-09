@@ -103,7 +103,7 @@ exports.getGenres = async function (req, res) {
             if (result.rows.length) {
                 let genreWithBooks = [];
                 for (let i = 0; i < result.rows.length; ++i) {
-                    let getBooksOfThisGenre = 'SELECT "Books_Authors"."Book_id", "Book_name", "Description", ' +
+                    let getBooksOfThisGenre = 'SELECT "Books_Authors"."Book_id" AS "Id", "Book_name", "Description", ' +
                         '"Price", "Image_url", "Author_id", CONCAT("First_name", \' \', "Surname", ' +
                         'COALESCE(\'-\' || "Last_name", \'\')) AS "author_name"' +
 

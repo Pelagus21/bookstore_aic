@@ -1,5 +1,8 @@
+{# book.Id, book.Image_url, book.Author_id, book.Book_name, book.Price#}
+
+
 <div class="card mx-5">
-    <a href="{{ "/book/ %s" | format(book.Book_id) }}" class="d-flex justify-content-center">
+    <a href="{{ "/book/ %s" | format(book.Id) }}" class="d-flex justify-content-center">
         {% set id = book.Book_id %}
         {% if book.Image_url == '' %}
             <img src="https://cdn2.mhpbooks.com/2016/09/no-books.jpg" class="align-self-center"
