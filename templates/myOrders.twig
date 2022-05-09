@@ -23,7 +23,7 @@
         {% if res.books.length == 0 %}
             <div class="d-flex justify-content-center">
                 <div class="d-flex">
-                    <h1>Your Cart Is Empty</h1>
+                    <h1>You haven`t ordered anything</h1>
                 </div>
             </div>
         {% endif %}
@@ -32,12 +32,6 @@
                 <td>{{ book.Book_name }}</td>
                 <td>{{ "%s %s" | format(book.authors[0].First_name, book.authors[0].Surname) }}</td>
                 <td>{{ book.Price }}</td>
-                <td>
-                    <input type="number" id="replyNumber" min="1" max = "{{ book.Number_of_copies }}" value = "1" data-bind="value:replyNumber" />
-                </td>
-                <td>
-                    <button>Delete</button>
-                </td>
             </tr>
             {% set counter = counter + book.Price %}
         {% endfor %}
