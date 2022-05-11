@@ -16,11 +16,15 @@ router.use((req, res, next) => {
     next();
 });
 
+
 router.get('/login', userController.getLoginForm);
 
 router.get('/registration', userController.getRegistrationForm);
 
 router.get('*', (req, res, next) => {
+    if(req.path === '/' || req.path === '/home' || req.path.includes('/book/')
+        || req.path.includes('/author/') || req.path.includes('/genre'))
+        return next();
     if(!req.user)
         res.redirect('/login');
     else
@@ -29,6 +33,10 @@ router.get('*', (req, res, next) => {
 
 
 router.post('/login', userController.logIn);
+
+router.get('/', (req, res) => {
+    res.redirect('/home');
+})
 
 router.get('/home', controller.getHomePage);
 
