@@ -48,6 +48,8 @@ router.get('/cart', controller.cart);
 
 router.get('/order', controller.order);
 
+router.get('/allUsersOrders', controller.allUsersOrders);
+
 router.get('/customerProfile', userController.getProfilePage);
 
 router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);

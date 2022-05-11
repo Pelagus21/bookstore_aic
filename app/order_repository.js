@@ -23,19 +23,19 @@ exports.getBooks = async function () {
 function getOrderInsertionQuery(body) {
     let queryStr = `INSERT INTO "Orders" ("Address", "Phone_number_1", `;
     if (body.phone_number_2) {
-        queryStr += "Phone_number_2, ";
+        queryStr += "\"Phone_number_2\", ";
     }
     if (body.phone_number_3) {
-        queryStr += "Phone_number_3, ";
+        queryStr += "\"Phone_number_3\", ";
     }
     queryStr += `"Delivery_date", "Creation_date", "Customer_login")`;
 
     queryStr += ` values ( '` + body.address + `', '` + body.phone_number_1 + `', `;
     if (body.phone_number_2) {
-        queryStr += `'` + body.phone_number_2 + "\', ";
+        queryStr += `'` + body.phone_number_2 + `', `;
     }
     if (body.phone_number_3) {
-        queryStr += `'` + body.phone_number_3 + "\', ";
+        queryStr += `'` + body.phone_number_3 + `', `;
     }
     queryStr += `current_date + interval '7 day', now(), '${body.user.Login}') RETURNING *`;
     return queryStr;
@@ -52,9 +52,9 @@ exports.performOrder = function (body) {
         /*add new order-books in order rows*/
         let queryStr = `INSERT INTO "Books_Orders" ("Order_id", "Book_id", "Copies_quantity")` +
             ` values `;
-        for (let i = 0; i < order.length; ++i) {
-            queryStr += `( ${orderId}, ${order[i].key}, ${order[i].value}),`
-        }
+        order.forEach((value, key, map)=>{
+            queryStr += `( ${orderId}, ${key}, ${value}),`
+        });
         queryStr = queryStr.slice(0, -1);//remove last comma
 
 
@@ -64,22 +64,22 @@ exports.performOrder = function (body) {
             let queryToDecreaseNumberOfCopies = 'UPDATE "Books" \n' +
                 'SET "Number_of_copies" = "Number_of_copies" - 1\n' +
                 `WHERE "Id" = ANY(ARRAY[${Array.from( order.keys()).toString()}])`
-            order = new Map();
-            db.query(queryToDecreaseNumberOfCopies);
+            order.clear();
+            return db.query(queryToDecreaseNumberOfCopies);
 
         });
     });
-    return;
+
 }
 
-exports.getAllUserOrders = function (user) {
-    // let queryStr = 'SELECT * FROM "Orders" WHERE "User_login" = user'
-    let queryStr = 'SELECT * ' +
-        `FROM "Books_Orders" INNER JOIN 
-        (SELECT * FROM "Orders" WHERE "Customer_login" = \' + ${user}) ON "Order_id" = "Orders"."Id"` +
-        'GROUP BY "Order_id"' +
-        'WHERE "Customer_login" = ' + user;
-    db.query(queryStr).then(res => {
-        let i = 0;
-    })
+exports.getAllUserOrders = function (login) {
+    let queryHelper = 'SELECT "Order_id", "Book_id", "Price" * "Copies_quantity" AS "PriceCopies" ' +
+        'FROM "Books_Orders" INNER JOIN "Books" ON "Books_Orders"."Book_id" = "Books"."Id"';
+
+    let queryStr = 'SELECT "Id", "Address", cast("Creation_date" AS TEXT) AS "Creation_date", ' +
+        'cast("Delivery_date" AS TEXT) AS "Delivery_date", (SUM("PriceCopies")) AS "TotalCost" ' +
+        'FROM "Orders" INNER JOIN (' + queryHelper + ') AS "QueryHelper" ON "Orders"."Id" = "QueryHelper"."Order_id" ' +
+        'WHERE "Orders"."Customer_login" = \'' + login + '\' ' +
+        'GROUP BY "Id", "Address", "Creation_date", "Delivery_date", "Customer_login";'
+    return db.query(queryStr);
 }
