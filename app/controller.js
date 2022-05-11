@@ -31,8 +31,11 @@ exports.addToCart = function (req, res) {
 }
 
 exports.cart = async function (req, res) {
+    let removeBookByIdOuter = ordersRepo.removeBookById;
+    let myRes = await ordersRepo.getBooks();
+    myRes.removeBookById = removeBookByIdOuter;
     return res.render(path.resolve(__dirname + '/../templates/cart.twig'), {
-        res: await ordersRepo.getBooks()
+        res: myRes
     });
 }
 
@@ -226,4 +229,9 @@ exports.allUsersOrders = function (req, res) {
     ordersRepo.getAllUserOrders(req.user.Login).then(result => {
         return res.render(path.resolve(__dirname + '/../templates/myOrders.twig'), {res: result.rows});
     });
+}
+
+exports.deleteFromOrder = function (req, res) {
+    ordersRepo.removeBookById(req.params.id);
+    res.redirect("/cart");
 }

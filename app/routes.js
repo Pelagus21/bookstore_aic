@@ -88,4 +88,6 @@ router.get('/possibleFriends', controller.possibleFriends);
 
 router.get('/queries', controller.queries);
 
+router.get('/deleteFromOrder/:id', controller.deleteFromOrder);
+
 module.exports.router = router;

@@ -3,6 +3,8 @@ const booksRepo = require('../app/books_repository');
 
 order = new Map();
 
+exports.order = order;
+
 exports.addToCart = function (book_id) {
     if (Array.from( order.keys()).indexOf(book_id) === -1) {
         order.set(book_id, 1);
@@ -18,6 +20,10 @@ exports.getBooks = async function () {
         res.total += Number(b.Price.replace(/[^0-9.-]+/g, "")) * value;
     }
     return res;
+}
+
+exports.removeBookById = function (id) {
+    order.delete(' ' + id);
 }
 
 function getOrderInsertionQuery(body) {
