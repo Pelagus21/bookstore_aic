@@ -90,4 +90,6 @@ router.get('/queries', controller.queries);
 
 router.get('/deleteFromOrder/:id', controller.deleteFromOrder);
 
+router.post('/search', controller.search);
+
 module.exports.router = router;

@@ -23,32 +23,11 @@
 
                 {% include '../views/bookCard.twig' with {book: book} %}
 
-                {#<div class="card mx-5 h-100 bg-info px-3 pt-3 text-light" style="width: 18rem;">
-                    <a href="{{ "/book/ %s" | format(book.Id) }}">
-                        {% set id = book.Book_id %}
-                        <img src="{{ book.Image_url }}"
-                             alt="Second slide" class="w-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-light">{{ book.Book_name }}</h5>
-                            <a href="{{ "/author/ %s" | format(book.Author_id) }}">
-                                <h5 class="card-title ">{{ book.author_name }}</h5>
-                            </a>
-                            <p class="card-text">{{ book.Price }}</p>
-                            <p class="card-text"> {{ book.Description|length > 50 ? book.Description|slice(0, 50) ~ '...' : book.Description }}</p>
-                            {% if book.Number_of_copies > 0 %}
-                                <a href="{{ "/addToCart/ %s" | format(book.Id) }}">
-                                    <button class="btn btn-light text-info">Add To Cart</button>
-                                </a>
-                            {% endif %}
-                            {% if book.Number_of_copies == 0 %}
-                                <button class="btn btn-light text-info disabled">Out of Stock</button>
-                            {% endif %}
-                        </div>
-                    </a>
-                </div>#}
-
             </div>
         {% endfor %}
+        {% if books.length == 0 %}
+            <h1>Nothing Found</h1>
+        {% endif %}
     </div>
 </div>
 
