@@ -82,6 +82,7 @@ exports.getRegistrationForm = function (req, res) {
 }
 
 exports.registerUser = function (req, res) {
+    userDTO.Login = req.body.username;
     userDTO.First_name = req.body.first_name;
     userDTO.Surname = req.body.surname;
     userDTO.Last_name = req.body.last_name;
