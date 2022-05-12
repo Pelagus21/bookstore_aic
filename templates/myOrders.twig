@@ -19,34 +19,32 @@
 
 <div class="container">
     <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Address</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Delivery Date</th>
+            <th scope="col">Price</th>
+        </tr>
+        </thead>
         <tbody>
-        {% if res.books.length == 0 %}
+        {% if res.length == 0 %}
             <div class="d-flex justify-content-center">
                 <div class="d-flex">
-                    <h1>You haven`t ordered anything</h1>
+                    <h1>You haven`t ordered anything yet</h1>
                 </div>
             </div>
         {% endif %}
-        {% for book in res.books %}
+        {% for row in res %}
             <tr>
-                <td>{{ book.Book_name }}</td>
-                <td>{{ "%s %s" | format(book.authors[0].First_name, book.authors[0].Surname) }}</td>
-                <td>{{ book.Price }}</td>
+                <td>{{ row.Address }}</td>
+                <td>{{ row.Creation_date }}</td>
+                <td>{{ row.Delivery_date ? row.Delivery_date : "Hasn`t been delevered yet" }}</td>
+                <td>{{ row.TotalCost }}</td>
             </tr>
-            {% set counter = counter + book.Price %}
         {% endfor %}
         </tbody>
     </table>
-    {% if res.books.length != 0 %}
-        <div class="d-flex flex-row-reverse">
-            <div class="p-2">Total: {{ res.total }}</div>
-        </div>
-        <div class="d-flex flex-row-reverse">
-            <a href="\order">
-                <button type="button" class="btn btn-info">Make an Order</button>
-            </a>
-        </div>
-    {% endif %}
 </div>
 
 </body>

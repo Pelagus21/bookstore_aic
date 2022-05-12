@@ -27,12 +27,15 @@ exports.getHomePage = function (req, res) {
 
 exports.addToCart = function (req, res) {
     ordersRepo.addToCart(req.params.id);
-    res.redirect('/home');
+    res.redirect(req.rawHeaders[25]);
 }
 
 exports.cart = async function (req, res) {
+    let removeBookByIdOuter = ordersRepo.removeBookById;
+    let myRes = await ordersRepo.getBooks();
+    myRes.removeBookById = removeBookByIdOuter;
     return res.render(path.resolve(__dirname + '/../templates/cart.twig'), {
-        res: await ordersRepo.getBooks()
+        res: myRes
     });
 }
 
@@ -148,9 +151,9 @@ exports.order = function (req, res) {
     return res.render(path.resolve(__dirname + '/../templates/order.twig'));
 }
 
-exports.createOrder = function (req, res) {
-    req.body.user =req.user;
-    ordersRepo.performOrder(req.body);
+exports.createOrder = async function (req, res) {
+    req.body.user = req.user;
+    await ordersRepo.performOrder(req.body);
     res.redirect('/home');
 }
 
@@ -181,17 +184,20 @@ exports.possibleFriends = async function (req, res) {
 
         }
     });
-    await exports.averagePrice().then(res=> {
+    await exports.averagePrice().then(res => {
         booksWithPriceQ = res.rows;
     })
-    return res.render(path.resolve(__dirname + '/../templates/possibleFriends.twig'), {users: usersQ, booksWithPrice: booksWithPriceQ});
+    return res.render(path.resolve(__dirname + '/../templates/possibleFriends.twig'), {
+        users: usersQ,
+        booksWithPrice: booksWithPriceQ
+    });
 }
 
 exports.averagePrice = function () {
     let qstr = 'SELECT coalesce(AVG("Price"::numeric), 0.00) AS AvgPrice, "Genres"."Genre_name"' +
-               'FROM ("Genres" LEFT JOIN "Books_Genres" ON "Id" = "Genre_id") LEFT JOIN "Books" ON "Books"."Id" = "Book_id"' +
-               'GROUP BY "Genres"."Genre_name"' +
-               'ORDER BY coalesce(AVG("Price"::numeric), 0.00) DESC';
+        'FROM ("Genres" LEFT JOIN "Books_Genres" ON "Id" = "Genre_id") LEFT JOIN "Books" ON "Books"."Id" = "Book_id"' +
+        'GROUP BY "Genres"."Genre_name"' +
+        'ORDER BY coalesce(AVG("Price"::numeric), 0.00) DESC';
     return db.query(qstr);
 }
 
@@ -202,16 +208,35 @@ exports.queries = async function (req, res) {
 
     let allAuthors = await authorsRepo.getAllAuthors();
     let res3 = new Map();
-    for(let i = 0; i < allAuthors.rows.length; ++i)
-    {
+    for (let i = 0; i < allAuthors.rows.length; ++i) {
         let t = await usersRepo.usersThatBoughtAllBooksOfAuthor(allAuthors.rows[i].Id);
         res3.set(allAuthors.rows[i].Surname, t.rows);
     }
     return res.render(path.resolve(__dirname + '/../templates/queries.twig'), {
         all_authors: allAuthors.rows,
-        res1 : res1.rows,
-        res2 : res2.rows,
-        res3 : res3,
-        res4 : res4.rows
+        res1: res1.rows,
+        res2: res2.rows,
+        res3: res3,
+        res4: res4.rows
     });
+}
+
+exports.allUsersOrders = function (req, res) {
+    ordersRepo.getAllUserOrders(req.user.Login).then(result => {
+        return res.render(path.resolve(__dirname + '/../templates/myOrders.twig'), {res: result.rows});
+    });
+}
+
+exports.deleteFromOrder = function (req, res) {
+    ordersRepo.removeBookById(req.params.id);
+    res.redirect("/cart");
+}
+
+exports.search = function (req, res) {
+    let sQ = req.body.searchQuery;
+
+    let queryStr = `SELECT * FROM "Books" WHERE "Book_name" LIKE \'%${sQ}%\' OR "Description" LIKE \'%${sQ}%\'`;
+    db.query(queryStr).then(result => {
+        return res.render(path.resolve(__dirname + '/../templates/home.twig'), {books: result.rows});
+    })
 }

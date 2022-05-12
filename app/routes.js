@@ -67,6 +67,8 @@ router.get('/cart', controller.cart);
 
 router.get('/order', controller.order);
 
+router.get('/allUsersOrders', controller.allUsersOrders);
+
 router.get('/customerProfile', userController.getProfilePage);
 
 router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
@@ -118,6 +120,12 @@ router.get('/genresInAllOrders', adminController.getGenresInAllOrders);
 router.get('/possibleFriends', controller.possibleFriends);
 
 router.get('/queries', controller.queries);
+
+router.get('/deleteFromOrder/:id', controller.deleteFromOrder);
+
+router.get('/myOrders', controller.allUsersOrders);
+
+router.post('/search', controller.search);
 
 router.get('/logout', userController.logOut);
 
