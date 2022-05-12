@@ -38,7 +38,7 @@ exports.getAllAuthors = function () {
 
 exports.deleteAuthor = function (id) {
     let qstr = 'DELETE FROM "Authors" WHERE "Id" = ' + id;
-    db.query(qstr);
+    return db.query(qstr);
 }
 
 //get authors sorted by popularity
@@ -54,5 +54,39 @@ exports.getAuthorsSortedByPopularity = function () {
             'GROUP BY "Author_id"' +
         ') AS "R1" ON "Authors"."Id" = "R1"."Author_id"' +
         'ORDER BY "Popularity" DESC';
+    return db.query(qstr);
+}
+
+exports.updateAuthor = function (id, body) {
+    let qstr = 'UPDATE "Authors" SET ' +
+        '"First_name" = \'' + body.first_name + '\', ' +
+        '"Surname" = \'' + body.surname + '\', ' +
+        '"Last_name" = ';
+        if(body.last_name.length)
+            qstr += '\'' + body.last_name + '\', ';
+        else
+            qstr += 'NULL, '
+    qstr += '"Pseudonym" = ';
+        if(body.pseudo.length)
+            qstr += '\'' + body.pseudo + '\' ';
+        else
+            qstr += 'NULL '
+    qstr += 'WHERE "Id" = ' + id;
+    return db.query(qstr);
+}
+
+exports.addAuthor = function (body) {
+    let qstr = 'INSERT INTO "Authors" ("First_name", "Surname", "Last_name", "Pseudonym") VALUES (' +
+        '\'' + body.first_name + '\', ' +
+        '\'' + body.surname + '\', ';
+    if(body.last_name.length)
+        qstr += '\'' + body.last_name + '\', ';
+    else
+        qstr += 'NULL, ';
+    if(body.pseudo.length)
+        qstr += '\'' + body.pseudo + '\'';
+    else
+        qstr += 'NULL';
+    qstr += ')';
     return db.query(qstr);
 }

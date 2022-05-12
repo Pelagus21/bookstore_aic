@@ -9,10 +9,10 @@ let userController = require('../app/user_controller');
 let adminController = require('../app/admin_controller');
 
 router.use((req, res, next) => {
-    if(!req.user) {
-        const authToken = req.cookies['AuthToken'];
-        req.user = userController.authTokens[authToken];
-    }
+    const admToken = req.cookies['AdminToken'];
+    req.admin = userController.adminTokens[admToken];
+    const authToken = req.cookies['AuthToken'];
+    req.user = userController.authTokens[authToken];
     next();
 });
 
@@ -25,12 +25,23 @@ router.get('*', (req, res, next) => {
     if(req.path === '/' || req.path === '/home' || req.path.includes('/book/')
         || req.path.includes('/author/') || req.path.includes('/genre'))
         return next();
+    if(req.admin && checkAdminPath(req.path))
+        return next();
     if(!req.user)
-        res.redirect('/login');
-    else
-        next();
+        return res.redirect('/login');
+    if(!checkAdminPath(req.path))
+        return next();
+    res.redirect('/login');
 });
 
+function checkAdminPath(path) {
+    return path.includes('/admin') || path.includes('/editBook/') || path === '/admLogout'
+        || path.includes('/deleteBook/') || path.includes('/updateBook/')
+        || path === '/addBook' || path === '/addAuthor' || path === '/addGenre'
+        || path === '/genresInAllOrders' || path.includes('/editGenre/')
+        || path.includes('/updateGenre/') || path.includes('/editAuthor/')
+        || path.includes('/updateAuthor/');
+}
 
 router.post('/login', userController.logIn);
 
@@ -62,13 +73,35 @@ router.post('/deleteCustomerAccount', userController.deleteCustomerAccount);
 
 router.post('/updateCustomerProfile', userController.updateCustomerProfile);
 
-router.get('/adminHome', controller.getAdminHomePage);
-
 router.get('/adminBooks', adminController.getAdminBooksPage);
 
 router.post('/deleteBook/:id', adminController.deleteBook);
 
 router.get('/editBook/:id', adminController.getEditBookPage);
+
+router.get('/addBook', adminController.getAddBookPage);
+
+router.post('/addBook', adminController.addBook);
+
+router.get('/editAuthor/:id', adminController.getEditAuthorPage);
+
+router.get('/addAuthor', adminController.getAddAuthorPage);
+
+router.post('/addAuthor', adminController.addAuthor);
+
+router.post('/deleteGenre/:id', adminController.deleteGenre);
+
+router.post('/deleteAuthor/:id', adminController.deleteAuthor);
+
+router.post('/updateAuthor/:id', adminController.updateAuthor);
+
+router.get('/editGenre/:id', adminController.getEditGenrePage);
+
+router.post('/updateGenre/:id', adminController.updateGenre);
+
+router.get('/addGenre', adminController.getAddGenrePage);
+
+router.post('/addGenre', adminController.addGenre);
 
 router.post('/createOrder', controller.createOrder);
 
@@ -85,5 +118,9 @@ router.get('/genresInAllOrders', adminController.getGenresInAllOrders);
 router.get('/possibleFriends', controller.possibleFriends);
 
 router.get('/queries', controller.queries);
+
+router.get('/logout', userController.logOut);
+
+router.get('/admLogout', userController.admLogOut);
 
 module.exports.router = router;

@@ -154,10 +154,6 @@ exports.createOrder = function (req, res) {
     res.redirect('/home');
 }
 
-exports.getAdminHomePage = function (req, res) {
-    res.render(path.resolve(__dirname + '/../templates/adminHome.twig'));
-}
-
 exports.possibleFriends = async function (req, res) {
 
     let CustomersToBooks = 'SELECT DISTINCT "Customers"."Login", "Books_Orders"."Book_id"' +

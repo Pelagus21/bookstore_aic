@@ -32,11 +32,13 @@
 </head>
 
 <body>
-<!-- Place for navbar -->
+
+{% include '../views/adminNavBar.twig'%}
+
 <div style="margin-top: 50px;" class="container">
     <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+        <div class="col-md-1"></div>
+        <div class="col-md-10" style="border: 1px solid #9C9C9C; background-color: #EAEAEA; padding-bottom: 20px;">
             <div class="row row-item">
                 <div class="col-md-12">
                     <h2 class="text-center text-info" style="padding-top: 10px">Books:</h2>
@@ -55,33 +57,40 @@
                                 <div class="col-md-1 list-col header-col">
                                     <h6 class="col-name">Id</h6>
                                 </div>
+                                <div class="col-md-2 list-col header-col">
+                                    <h6 class="col-name">Image</h6>
+                                </div>
                                 <div class="col-md-4 list-col header-col">
                                     <h6 class="col-name">Book name</h6>
                                 </div>
-                                <div class="col-md-2 list-col header-col">
-                                    <h6 class="col-name">Copies available</h6>
+                                <div class="col-md-1 list-col header-col">
+                                    <h6 class="col-name">Copies left</h6>
                                 </div>
 
-                                <div class="col-md-2 list-col header-col">
-                                    <h6 class="col-name">Popularity</h6>
+                                <div class="col-md-1 list-col header-col">
+                                    <h6 class="col-name">Popular.</h6>
                                 </div>
                                 <div class="col-md-3 list-col"></div>
                             </div>
                         </li>
                         {% for book in books %}
                         <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-1 list-col value-col">
+                            <div class="row align-items-center">
+                                <div class="col-md-1 list-col">
                                     <h5>{{ book.Id }}</h5>
+                                </div>
+                                <div class="col-md-2 list-col value-col">
+                                    <img src="{{ book.Image_url }}"
+                                         alt="{{ book.Book_name }} title image" class="w-75">
                                 </div>
                                 <div class="col-md-4 list-col value-col">
                                     <h5>{{ book.Book_name }}</h5>
                                 </div>
-                                <div class="col-md-2 list-col value-col">
+                                <div class="col-md-1 list-col value-col">
                                     <h5>{{ book.Number_of_copies }}</h5>
                                 </div>
 
-                                <div class="col-md-2 list-col value-col">
+                                <div class="col-md-1 list-col value-col">
                                     <h5>{{ book.Popularity }}</h5>
                                 </div>
 
@@ -100,13 +109,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="row row-item">
-                <div class="col-md-12">
-                    <a href="/adminHome" class="btn btn-primary">Back</a>
-                </div>
-            </div>
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
     </div>
 </div>
 <!-- Modal -->

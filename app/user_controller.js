@@ -6,6 +6,7 @@ let failed = false;
 let exists = false;
 let userDTO = {};
 let authTokens = {};
+let adminTokens = {};
 let updated = false;
 
 const generateAuthToken = () => {
@@ -13,6 +14,7 @@ const generateAuthToken = () => {
 }
 
 exports.authTokens = authTokens;
+exports.adminTokens = adminTokens;
 
 exports.getLoginForm = function (req, res) {
     res.render(path.resolve(__dirname + '/../templates/login.twig'), {failed: failed});
@@ -20,6 +22,8 @@ exports.getLoginForm = function (req, res) {
 };
 
 exports.logIn = function (req, res) {
+    res.clearCookie('AuthToken');
+    res.clearCookie('AdminToken');
     userRepo.findCustomerByCredentials(req.body.username, req.body.password)
     .then(
         (result) => {
@@ -36,9 +40,9 @@ exports.logIn = function (req, res) {
                         if(res2.rows.length) {
                             console.log("Admin authenticated");
                             let token = generateAuthToken();
-                            authTokens[token] = res2.rows[0];
-                            res.cookie('AuthToken', token);
-                            res.redirect('/adminHome');
+                            adminTokens[token] = res2.rows[0];
+                            res.cookie('AdminToken', token);
+                            res.redirect('/adminBooks');
                         } else {
                             console.log("Authentication failed!");
                             failed = true;
@@ -54,6 +58,20 @@ exports.logIn = function (req, res) {
             res.end("Error: Something went wrong");
         }
     );
+}
+
+exports.logOut = function (req, res) {
+    let token = req.cookies['AuthToken'];
+    delete authTokens[token];
+    res.clearCookie('AuthToken');
+    res.redirect('/login');
+}
+
+exports.admLogOut = function (req, res) {
+    let token = req.cookies['AdminToken'];
+    delete adminTokens[token];
+    res.clearCookie('AdminToken');
+    res.redirect('/login');
 }
 
 exports.getRegistrationForm = function (req, res) {
@@ -95,7 +113,6 @@ exports.getProfilePage = function (req, res) {
         let date = d.getDate();
         usr['Birth_date'] = d.getFullYear() + '-' + (mon < 10 ? '0' + mon : mon) + '-' + (date < 10 ? '0' + date : date);
     }
-    //console.log(usr);
     res.render(path.resolve(__dirname + '/../templates/customerProfile.twig'),
         {user : usr, updated : updated});
     updated = false;

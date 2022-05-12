@@ -38,7 +38,7 @@ exports.getAllGenres = function() {
 
 exports.deleteGenre = function (id) {
     let qstr = 'DELETE FROM "Genres" WHERE "Id" = ' + id;
-    db.query(qstr);
+    return db.query(qstr);
 }
 
 //get genres sorted by popularity
@@ -78,25 +78,6 @@ exports.getGenresInAllOrders = function () {
     return db.query(qstr);
 }
 
-// exports.getGenresWhichReadAllCustomers = function () {
-//     let qstr = 'SELECT "Id", "Genre_name"' +
-//         'FROM "Genres" AS "R1"' +
-//         'WHERE NOT EXISTS (' +
-//             'SELECT *' +
-//             'FROM "Customers"' +
-//             'WHERE "Login" NOT IN (' +
-//                 'SELECT "Customer_login"' +
-//                 'FROM "Orders" INNER JOIN "Books_Orders" ON "Orders"."Id" = "Order_id"' +
-//                 'WHERE "Book_id" IN (' +
-//                     'SELECT "Book_id"' +
-//                     'FROM "Books_Genres"' +
-//                     'WHERE "Genre_id" = "R1"."Id"' +
-//                 ')' +
-//             ')' +
-//         ')';
-//     return db.query(qstr);
-// }
-
 exports.countBookInEveryGenre = function () {
     let queryHelperStr = 'SELECT *' +
         'FROM "Books" INNER JOIN "Books_Genres" ON "Books"."Id" = "Books_Genres"."Book_id"';
@@ -122,3 +103,19 @@ exports.countsBooksFromEachAuthor = function () {
         'GROUP BY "Authors"."Id";';
     return db.query(qstr);
 }
+
+exports.updateGenre = function (id, body) {
+    let qstr = 'UPDATE "Genres" SET ' +
+        '"Genre_name" = \'' + body.genre_name + '\', ' +
+        '"Description" = \'' + body.description + '\' ' +
+        'WHERE "Id" = ' + id;
+    return db.query(qstr);
+}
+
+exports.addGenre = function (body) {
+    let qstr = 'INSERT INTO "Genres" ("Genre_name", "Description") VALUES (' +
+        '\'' + body.genre_name + '\', ' +
+        '\'' + body.description + '\')';
+    return db.query(qstr);
+}
+

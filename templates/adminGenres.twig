@@ -28,18 +28,31 @@
         .col-name{
             color: #9C9C9C;
         }
+        .errLabel {
+            display: none;
+            color: orangered;
+            margin-top: 10px
+        }
     </style>
 </head>
 
 <body>
-<!-- Place for navbar -->
+
+{% include '../views/adminNavBar.twig'%}
+
 <div style="margin-top: 50px;" class="container">
     <div class="row">
         <div class="col-md-2"></div>
-        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA; padding-bottom: 20px;">
             <div class="row row-item">
                 <div class="col-md-12">
-                    <h2 class="text-center text-info" style="padding-top: 10px">Genres:</h2>
+                    <h2 class="text-center text-info" style="padding-top: 10px">
+                        {% if flagP %}
+                        Genres:
+                        {% else %}
+                        Find genres, whose books are in every order:
+                        {% endif %}
+                    </h2>
                 </div>
             </div>
             {% if flagP %}
@@ -78,6 +91,7 @@
                                     </div>
                                     <div class="col-md-6 list-col value-col">
                                         <h5>{{ genre.Genre_name }}</h5>
+                                        <p id="er{{ genre.Id }}" class="errLabel h6">Cannot delete genre which currently has books</p>
                                     </div>
 
                                     <div class="col-md-2 list-col value-col">
@@ -97,11 +111,6 @@
                             </li>
                         {%  endfor %}
                     </ul>
-                </div>
-            </div>
-            <div class="row row-item">
-                <div class="col-md-12">
-                    <a href="/adminHome" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -132,6 +141,10 @@
 </div>
 <script>
 
+    {% if genreDelId %}
+    document.getElementById('er{{ genreDelId }}').style.display = "initial";
+    {% endif %}
+
     {% if flagP %}
     setPopularity();
 
@@ -143,6 +156,7 @@
         {% endfor %}
     }
     {% endif %}
+
     function delClick(genreId, genreName) {
         document.getElementById('modalBodyText').innerHTML = "Delete \"" + genreName + "\" genre?";
         document.getElementById('delForm').action = '/deleteGenre/'+ genreId;

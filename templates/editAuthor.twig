@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Author</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .errLabel {
+            display: none;
+            color: orangered;
+            margin-top: 10px
+        }
+    </style>
+</head>
+
+<body>
+
+{% include '../views/adminNavBar.twig'%}
+
+<div class="container" style="margin-top: 50px; max-width: 700px; height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-12">
+            <form class="form" action="/updateAuthor/{{ author.Id }}" method="post" onsubmit="formSubmit(event, this);">
+                <h3 style="margin-top: 20px;" class="text-center text-info">Edit Author:</h3>
+                {% if updated %}
+                    <div class="form-group">
+                        <h5 style="color: green; margin-top: 20px;">Author updated!</h5>
+                    </div>
+                {% endif %}
+                <div class="form-group" style="margin-top: 10px">
+                    <label class="h6" for="first_name" class="text-info">First name:</label>
+                    <br>
+                    <input type="text" name="first_name" class="form-control" placeholder="Enter author`s first name"
+                           value="{{ author.First_name }}">
+                    <p id="firstNameBlankErr" class="errLabel">First name cannot be blank!</p>
+                </div>
+                <div class="form-group">
+                    <label class="h6" for="surname" class="text-info">Surname:</label>
+                    <br>
+                    <input type="text" name="surname" class="form-control" placeholder="Enter author`s surname"
+                           value="{{ author.Surname }}">
+                    <p id="surnameBlankErr" class="errLabel">Surname cannot be blank!</p>
+                </div>
+                <div class="form-group">
+                    <label class="h6" for="last_name" class="text-info">Last name:</label>
+                    <br>
+                    <input type="text" name="last_name" class="form-control" placeholder="Enter author`s last name (optional)"
+                           value="{{ author.Last_name }}">
+                </div>
+                <div class="form-group">
+                    <label class="h6" for="pseudo" class="text-info">Pseudonym:</label>
+                    <br>
+                    <input type="text" name="pseudo" class="form-control" placeholder="Enter author`s pseudonym (optional)"
+                           value="{{ author.Pseudonym }}">
+                </div>
+                <div class="form-group" style="width:100%; margin-top: 20px">
+                    <a href="/adminAuthors" class="btn btn-primary btn-md">Back</a>
+                    <button type="submit" class="btn btn-primary btn-md" style="float: right;">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function formSubmit(event, form) {
+        let fname = form.first_name.value;
+        let sname = form.surname.value;
+        let lname = form.last_name.value;
+        let pseudo = form.pseudo.value;
+        if(fname === '') {
+            document.getElementById('firstNameBlankErr').style.display = "initial";
+        }
+        if(sname === '') {
+            document.getElementById('surnameBlankErr').style.display = "initial";
+        }
+        if(sname === '' || fname === '' || (
+            fname === '{{ author.First_name }}'
+            && sname === '{{ author.Surname }}'
+            && lname === '{{ author.Last_name }}'
+            && pseudo === '{{ author.Pseudonym }}')) {
+            return event.preventDefault();
+        }
+    }
+</script>
+</body>
+</html>

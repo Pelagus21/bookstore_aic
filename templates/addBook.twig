@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Book</title>
+    <title>Add Book</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -44,49 +44,41 @@
 <div class="container" style="margin-top: 50px; max-width: 700px; height: auto; min-height: 100% !important; border: 1px solid #9C9C9C; background-color: #EAEAEA;">
     <div class="row justify-content-center align-items-center">
         <div class="col-md-12">
-            <form class="form" id="updateForm" onsubmit="formSubmit(event, this);">
-                <h3 style="margin-top: 20px;" class="text-center text-info">Edit Book:</h3>
-                {% if updated %}
-                    <div class="form-group">
-                        <h5 style="color: green; margin-top: 20px;">Book updated!</h5>
-                    </div>
-                {% endif %}
+            <form class="form" id="addForm" onsubmit="formSubmit(event, this);">
+                <h3 style="margin-top: 20px;" class="text-center text-info">Add Book:</h3>
                 <div class="form-group" style="margin-top: 10px">
-                    <label class="h6" for="username" class="text-info">Book name:</label>
+                    <label class="h6" for="username" class="text-info">Book name: *</label>
                     <br>
-                    <input type="text" name="book_name" class="form-control" placeholder="Enter your book name"
-                        value="{{ book.Book_name }}">
+                    <input type="text" name="book_name" class="form-control" placeholder="Enter book name">
                     <p id="bookNameBlankErr" class="errLabel">Book name cannot be blank!</p>
                 </div>
                 <div class="form-group">
-                    <label class="h6" for="description" class="text-info">Description:</label>
+                    <label class="h6" for="description" class="text-info">Description: *</label>
                     <br>
                     <textarea name="description"
                               class="form-control"
                               rows="4"
-                              placeholder="Enter book description">{{ book.Description }}</textarea>
+                              placeholder="Enter book description"></textarea>
                     <p id="descriptionBlankErr" class="errLabel">Description cannot be blank!</p>
                 </div>
                 <div class="form-group">
                     <label class="h6" for="url" class="text-info">Image URL:</label>
                     <br>
-                    <input type="url" name="url" class="form-control" placeholder="Enter image url (optional)"
-                           value="{{ book.Image_url }}">
+                    <input type="url" name="url" class="form-control" placeholder="Enter image url (optional)">
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-4">
-                            <label class="h6" for="price" class="text-info">Price:</label>
+                            <label class="h6" for="price" class="text-info">Price: *</label>
                             <br>
-                            <input type="number" id="priceInput" min="0.00" step="0.01" name="price" class="form-control" placeholder="Enter book price">
+                            <input type="number" id="priceInput" min="0.00" step="0.01" name="price" class="form-control" value="0.00" placeholder="Enter book price">
                             <p id="priceBlankErr" class="errLabel">Fill price field!</p>
                         </div>
                         <div class="col-md-2"></div>
                         <div class="col-md-4">
                             <label class="h6" for="year" class="text-info">Publishing year:</label>
                             <br>
-                            <input type="number" id="yearInput" min="0" name="year" class="form-control" placeholder="Enter publishing year (optional)"
-                                   value="{{ book.Year_of_publishing }}">
+                            <input type="number" id="yearInput" min="0" name="year" class="form-control" placeholder="Enter publishing year (optional)">
                         </div>
                         <div class="col-md-2"></div>
                     </div>
@@ -94,10 +86,9 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-4">
-                            <label class="h6" for="copies_numb" class="text-info">Number of copies:</label>
+                            <label class="h6" for="copies_numb" class="text-info">Number of copies: *</label>
                             <br>
-                            <input type="number" id="copiesInput" min="0" name="copies_numb" class="form-control" placeholder="Enter number of copies"
-                                   value="{{ book.Number_of_copies }}">
+                            <input type="number" id="copiesInput" min="0" name="copies_numb" class="form-control" value="0" placeholder="Enter number of copies">
                             <p id="copiesBlankErr" class="errLabel">Fill copies number field!</p>
                         </div>
                         <div class="col-md-8"></div>
@@ -114,11 +105,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul id="authorsList" class="list-group lst">
-                                        {% for author in authors %}
-                                            <li id="a{{ author.Id }}" class="list-group-item hoverable" onclick="authorClicked({{ author.Id }})">
-                                                {{ author.First_name }} {{ author.Surname }}
-                                            </li>
-                                        {% endfor %}
+
                                     </ul>
                                 </div>
                             </div>
@@ -146,16 +133,12 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul id="genresList" class="list-group lst">
-                                        {% for genre in genres %}
-                                            <li id="g{{ genre.Id }}" class="list-group-item hoverable" onclick="genreClicked({{ genre.Id }})">
-                                                {{ genre.Genre_name }}
-                                            </li>
-                                        {% endfor %}
+
                                     </ul>
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 5px">
-                               <div class="col-md-12">
+                                <div class="col-md-12">
                                     <button type="button"
                                             class="btn btn-primary btn-sm"
                                             onclick="deleteGenre()"
@@ -166,14 +149,14 @@
                                             onclick="addGenresClicked();"
                                             data-toggle="modal"
                                             data-target="#addModal">Add</button>
-                               </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group" style="width:100%; margin-top: 10px">
                     <a href="/adminBooks" class="btn btn-primary btn-md">Back</a>
-                    <button type="submit" class="btn btn-primary btn-md" style="float: right;">Update</button>
+                    <button type="submit" class="btn btn-primary btn-md" style="float: right;">Add</button>
                 </div>
             </form>
         </div>
@@ -208,25 +191,25 @@
     let lastGenreClickedId = -1;
 
     let allAuthorMap = {
-        {% for auth in all_authors %}
-            {{ auth.Id }} : '{{ auth.First_name }} {{ auth.Surname }}',
-        {% endfor %}
+    {% for auth in all_authors %}
+    {{ auth.Id }} : '{{ auth.First_name }} {{ auth.Surname }}',
+    {% endfor %}
     };
 
     let allGenreMap = {
-        {% for genr in all_genres %}
-            {{ genr.Id }} : '{{ genr.Genre_name }}',
-        {% endfor %}
+    {% for genr in all_genres %}
+    {{ genr.Id }} : '{{ genr.Genre_name }}',
+    {% endfor %}
     };
 
-    setMaxYearAndPrice();
+    setMaxYear();
 
     function modalAddClicked() {
         let modl = document.getElementById('modalList');
         let elemsList = modl.getElementsByTagName("li");
         let forAuthors = modl.parentElement.id === 'authorsDiv';
         let targetList = forAuthors ? document.getElementById('authorsList') :
-                document.getElementById('genresList');
+            document.getElementById('genresList');
         for(let i = 0; i < elemsList.length; i++) {
             let checkbox = document.getElementById('check' + i);
             if(checkbox.checked) {
@@ -282,7 +265,6 @@
         for (let i = 0; i < genresList.length; i++) {
             genreIds.push(parseInt(genresList[i].id.substr(1)));
         }
-
         let diffArr = getDiffArray(Object.keys(allGenreMap), genreIds);
         if(!diffArr.length) {
             let text =  document.createTextNode("No available genres");
@@ -342,9 +324,8 @@
         return res;
     }
 
-    function setMaxYearAndPrice() {
+    function setMaxYear() {
         document.getElementById('yearInput').setAttribute("max", new Date().getFullYear().toString());
-        document.getElementById('priceInput').setAttribute("value", "{{ book.Price }}".substr(1));
     }
 
     function authorClicked(id) {
@@ -396,18 +377,6 @@
         for (let i = 0; i < genresList.length; i++) {
             genresIds.push(parseInt(genresList[i].id.substr(1)));
         }
-        let bookFieldsNotDiffer =   '{{ book.Book_name }}' === form.book_name.value &&
-                                    '{{ book.Description }}' === form.description.value &&
-                                    '{{ book.Image_url }}' === form.url.value &&
-                                    '{{ book.Number_of_copies }}' === form.copies_numb.value &&
-                                    '{{ book.Price }}'.substr(1) === form.price.value &&
-                                    '{{ book.Year_of_publishing }}' === form.year.value;
-
-        let authEq = authorsArraysEqual(authorIds.sort());
-        let genEq = genresArraysEqual(genresIds.sort());
-        if (bookFieldsNotDiffer && authEq && genEq) {
-            return event.preventDefault();
-        }
         let b_name = form.book_name.value;
         let descr = form.description.value;
         let copies_n = form.copies_numb.value;
@@ -428,52 +397,30 @@
             return event.preventDefault();
         }
         event.preventDefault();
-        fetch('/updateBook/{{ book.Id }}', {
+        fetch('/addBook', {
             method: 'POST',
             redirect: 'follow',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 "data": {
-                    "book_changed" : !bookFieldsNotDiffer,
                     "book_name": form.book_name.value,
                     "description": form.description.value,
-                    "url": form.url.value,
+                    "url": (form.url.value.length) ? form.url.value : undefined,
                     "price": parseFloat(form.price.value),
                     "copies_numb": parseInt(form.copies_numb.value),
                     "year": (form.year.value.length) ? parseInt(form.year.value) : undefined,
-                    "authors_ids": (!authEq) ? authorIds : undefined,
-                    "genres_ids": (!genEq) ? genresIds : undefined
+                    "authors_ids": (authorIds.length) ? authorIds : undefined,
+                    "genres_ids": (genresIds.length) ? genresIds : undefined
                 }
             })
         })
-        .then(
-            (result) => {
-                console.log(result);
-                window.location.href = '/editBook/{{ book.Id }}';
-            }
-        );
+            .then(
+                (result) => {
+                    console.log(result);
+                    window.location.href = '/adminBooks';
+                }
+            );
     }
-
-    function authorsArraysEqual(idArr) {
-        let arr = [
-            {% for author in authors %}
-                {{ author.Id }} ,
-            {% endfor %}
-        ].sort();
-        return arr.length === idArr.length &&
-            arr.every((value, index) => { return value === idArr[index]});
-    }
-
-    function genresArraysEqual(idArr) {
-        let arr = [
-            {% for genre in genres %}
-                {{ genre.Id }} ,
-            {% endfor %}
-        ].sort();
-        return arr.length === idArr.length &&
-            arr.every((value, index) => { return value === idArr[index]});
-    }
-
 </script>
 </body>
 </html>

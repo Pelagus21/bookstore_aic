@@ -28,15 +28,23 @@
         .col-name{
             color: #9C9C9C;
         }
+        .errLabel {
+            display: none;
+            color: orangered;
+            margin-top: 10px
+        }
+
     </style>
 </head>
 
 <body>
-<!-- Place for navbar -->
+
+{% include '../views/adminNavBar.twig'%}
+
 <div style="margin-top: 50px;" class="container">
     <div class="row">
         <div class="col-md-2"></div>
-        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA;">
+        <div class="col-md-8" style="border: 1px solid #9C9C9C; background-color: #EAEAEA; padding-bottom: 20px;">
             <div class="row row-item">
                 <div class="col-md-12">
                     <h2 class="text-center text-info" style="padding-top: 10px">Authors:</h2>
@@ -73,6 +81,7 @@
                                     </div>
                                     <div class="col-md-6 list-col value-col">
                                         <h5>{{ author.First_name }} {{ author.Surname }}</h5>
+                                        <p id="er{{ author.Id }}" class="errLabel h6">Cannot delete author who currently has books!</p>
                                     </div>
 
                                     <div class="col-md-2 list-col value-col">
@@ -92,11 +101,6 @@
                             </li>
                         {%  endfor %}
                     </ul>
-                </div>
-            </div>
-            <div class="row row-item">
-                <div class="col-md-12">
-                    <a href="/adminHome" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -128,6 +132,10 @@
 <script>
 
     setPopularity();
+
+    {% if authDelId %}
+    document.getElementById('er{{ authDelId }}').style.display = "initial";
+    {% endif %}
 
     function setPopularity() {
         let popularity;
