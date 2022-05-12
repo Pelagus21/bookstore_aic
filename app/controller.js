@@ -27,7 +27,7 @@ exports.getHomePage = function (req, res) {
 
 exports.addToCart = function (req, res) {
     ordersRepo.addToCart(req.params.id);
-    res.redirect('/home');
+    res.redirect(req.rawHeaders[25]);
 }
 
 exports.cart = async function (req, res) {
