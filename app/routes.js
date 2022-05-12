@@ -131,4 +131,6 @@ router.get('/logout', userController.logOut);
 
 router.get('/admLogout', userController.admLogOut);
 
+router.post('/searchAdmin', adminController.getBooksBySearch);
+
 module.exports.router = router;

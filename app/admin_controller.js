@@ -25,6 +25,21 @@ exports.getAdminBooksPage = function (req, res) {
     );
 }
 
+exports.getBooksBySearch = function (req, res) {
+    bookRepo.getBooksBySearch(req.body.searchQuery)
+        .then(
+            (result) => {
+                res.render(path.resolve(__dirname + '/../templates/adminBooks.twig'),
+                    {books : result.rows});
+            },
+            (error) => {
+                console.log(error);
+                res.statusCode = 500;
+                res.end('Unknown error');
+            }
+        );
+}
+
 exports.deleteBook = function(req, res) {
     bookRepo.deleteBook(req.params.id)
     .then(

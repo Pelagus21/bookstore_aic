@@ -133,6 +133,20 @@ exports.getBooksSortedByPopularity = function () {
     return db.query(qstr);
 }
 
+exports.getBooksBySearch = function (sQ) {
+    let qstr = 'SELECT "Id", "Book_name", "Number_of_copies", "Image_url", COALESCE("Entry_number", 0) AS "Popularity" ' +
+        'FROM "Books" LEFT JOIN ( ' +
+        'SELECT "Book_id", COUNT(*) AS "Entry_number"' +
+        'FROM "Books_Orders"' +
+        'GROUP BY "Book_id") AS "Res1" ON "Books"."Id" = "Res1"."Book_id"' +
+        'ORDER BY "Popularity" DESC';
+    let qstr2 =`SELECT "Id" FROM "Books" WHERE "Book_name" LIKE \'%${sQ}%\' OR "Description" LIKE \'%${sQ}%\'`;
+    let qres = 'SELECT "R1"."Id", "Book_name", "Number_of_copies", "Image_url", "Popularity"' +
+        'FROM (' + qstr + ') AS "R1" INNER JOIN (' + qstr2 + ') AS "R2" ON "R1"."Id" = "R2"."Id"';
+    return db.query(qres);
+}
+
+
 exports.addBook = function (data) {
     let qstr = 'INSERT INTO "Books" ("Book_name", "Number_of_copies", ' +
         '"Description", "Price", "Year_of_publishing", "Image_url")' +
@@ -171,4 +185,9 @@ exports.addAuthorsForBook = function (bookId, authors_ids) {
         return db.query(query2.substr(0, query2.length - 2));
     }
     return new Promise((resolve) => { resolve(true); });
+}
+
+exports.searchBook = function (sQ) {
+    let queryStr = `SELECT * FROM "Books" WHERE "Book_name" LIKE \'%${sQ}%\' OR "Description" LIKE \'%${sQ}%\'`;
+    return db.query(queryStr);
 }

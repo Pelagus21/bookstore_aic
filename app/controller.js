@@ -232,11 +232,20 @@ exports.deleteFromOrder = function (req, res) {
     res.redirect("/cart");
 }
 
-exports.search = function (req, res) {
-    let sQ = req.body.searchQuery;
+// exports.search = function (req, res) {
+//     let sQ = req.body.searchQuery;
+//
+//     let queryStr = `SELECT * FROM "Books" WHERE "Book_name" LIKE \'%${sQ}%\' OR "Description" LIKE \'%${sQ}%\'`;
+//     db.query(queryStr).then(result => {
+//         return res.render(path.resolve(__dirname + '/../templates/home.twig'), {books: result.rows});
+//     })
+// }
 
-    let queryStr = `SELECT * FROM "Books" WHERE "Book_name" LIKE \'%${sQ}%\' OR "Description" LIKE \'%${sQ}%\'`;
-    db.query(queryStr).then(result => {
-        return res.render(path.resolve(__dirname + '/../templates/home.twig'), {books: result.rows});
-    })
+exports.search = function (req, res) {
+    booksRepo.searchBook(req.body.searchQuery)
+        .then(
+            (result) => {
+                return res.render(path.resolve(__dirname + '/../templates/home.twig'), {books: result.rows});
+            }
+        );
 }
